@@ -164,7 +164,7 @@ Blockly.common.defineBlocksWithJsonArray([
         "nextStatement": null,
         "colour": "#00A2BE",
         "tooltip": "Heading with selectable level (H1–H6)",
-        "helpUrl": ""
+        "helpUrl": "https://tungtungtungsahur.tuff"
     },
     {
         "type": "doctype",

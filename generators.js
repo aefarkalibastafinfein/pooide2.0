@@ -11,11 +11,12 @@ javascript.javascriptGenerator.forBlock['p'] = function (block) {
 };
 javascript.javascriptGenerator.forBlock['set_bg'] = function (block) {
     const color = block.getFieldValue('COLOR');
-    return `'${color}';\n`;
+    return `<style>body { background-color: ${color}; }</style>\n`;
 };
-javascript.javascriptGenerator.forBlock['heading'] = function (block) {
-    const level = block.getFieldValue('LEVEL') || 'h1';
-    const text = block.getFieldValue('TEXT') || '';
+Blockly.JavaScript.forBlock['heading'] = function (block) {
+    const level = block.getFieldValue('LEVEL');
+    const text = block.getFieldValue('TEXT');
+
     return `<${level}>${text}</${level}>\n`;
 };
 
