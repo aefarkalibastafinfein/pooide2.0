@@ -20,13 +20,21 @@
     </head>
 
     <body>
-        <div id="blocklyDiv" style="height: 480px; width: 600px;"></div>
+        <div style="margin-top:8px">
+            <button onclick="downloadBlocksXml()">Save</button>
+            <button onclick="downloadGeneratedPage()">Export HTML</button>
+        </div>
+
+        <script src="download.js"></script>
+        <div id="blocklyDiv" style="height: 946px; width: 1919px;"></div>
         <script>
             const workspace = Blockly.inject('blocklyDiv', {
                 renderer: 'zelos',
                 toolbox: myToolbox
             });
         </script>
+
+        <!-- Poopy butt dookie-->
     </body>
 
 </html>

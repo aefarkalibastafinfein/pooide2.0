@@ -9,7 +9,7 @@ Blockly.common.defineBlocksWithJsonArray([
         }],
         "previousStatement": null,
         "nextStatement": null,
-        "colour": "#666666",
+        "colour": "#474747",
         "tooltip": "Poopy poopy butt dookie"
     },
     {
@@ -52,11 +52,47 @@ Blockly.common.defineBlocksWithJsonArray([
             {
                 type: 'field_colour_hsv_sliders',
                 name: 'COLOUR',
-                colour: '#ff0000',
+                colour: '#ff9100',
             },
         ],
         output: 'Colour',
         style: 'colour_blocks',
         tooltip: 'ABABABAbbaabababABbABabBABabABbababABabABbaBABabABbABABabAbabABaBS',
     },
+    {
+        "type": "heading",
+        "message0": "%1 %2",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "LEVEL",
+                "options": [
+                    ["H1", "h1"],
+                    ["H2", "h2"],
+                    ["H3", "h3"],
+                    ["H4", "h4"],
+                    ["H5", "h5"],
+                    ["H6", "h6"]
+                ]
+            },
+            {
+                "type": "field_input",
+                "name": "TEXT",
+                "text": "Heading text"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#00A2BE",
+        "tooltip": "Heading",
+        "helpUrl": ""
+    },
+    {
+        "type": "doctype",
+        "message0": "<!DOCTYPE html>",
+        "nextStatement": null,
+        "colour": "#474747",
+        "tooltip": "OOOooooooGagagagagagagaa"
+    }
+
 ]);

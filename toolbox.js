@@ -1,6 +1,8 @@
 const myToolbox = {
     "kind": "flyoutToolbox",
     "contents": [
+        { "kind": "block", "type": "doctype" },
+        { "kind": "block", "type": "heading" },
         { "kind": "block", "type": "page_title" },
         { "kind": "block", "type": "p" },
         {
@@ -16,6 +18,7 @@ const myToolbox = {
                     }
                 }
             }
-        }
+        },
+
     ]
 };
