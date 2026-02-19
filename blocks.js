@@ -32,6 +32,66 @@ Blockly.common.defineBlocksWithJsonArray([
         "colour": "#474747"
     },
     {
+        "type": "body_wrapper",
+        "tooltip": "tuff",
+        "helpUrl": "tuff.com",
+        "message0": "Body %1 %2",
+        "args0": [
+            {
+                "type": "input_dummy",
+                "name": "NAME"
+            },
+            {
+                "type": "input_statement",
+                "name": "HTML"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#5a5a5a",
+    },
+    {
+        "type": "head_wrapper",
+        "tooltip": "tuff",
+        "helpUrl": "tuff.com",
+        "message0": "Head %1 %2",
+        "args0": [
+            {
+                "type": "input_dummy",
+                "name": "NAME"
+            },
+            {
+                "type": "input_statement",
+                "name": "HTML"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#5a5a5a",
+        "tooltip": "AAAaaaaAAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaA"
+    },
+    {
+        "type": "header_wrapper",
+        "tooltip": "tuff",
+        "helpUrl": "tuff.com",
+        "message0": "Header %1 %2",
+        "args0": [
+            {
+                "type": "input_dummy",
+                "name": "NAME"
+            },
+            {
+                "type": "input_statement",
+                "name": "HTML"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#646464",
+        "tooltip": "AAAaaaaAAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaA"
+    },
+
+    {
         "type": "p",
         "message0": "Paragraph: %1",
         "args0": [{

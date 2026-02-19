@@ -19,6 +19,10 @@ const myToolbox = {
             }
         },
         { "kind": "block", "type": "html_wrapper" },
+        { "kind": "block", "type": "head_wrapper" },
+        { "kind": "block", "type": "header_wrapper" },
+        { "kind": "block", "type": "body_wrapper" },
+
         { "kind": "block", "type": "heading" },
     ]
 };

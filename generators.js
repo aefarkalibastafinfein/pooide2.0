@@ -23,4 +23,22 @@ javascript.javascriptGenerator.forBlock['html_wrapper'] = function (block) {
     const statement_html = generator.statementToCode(block, 'HTML');
     const code = `<html>${statement_html}</html>\n`;
     return code;
-}
+};
+
+javascript.javascriptGenerator.forBlock['body_wrapper'] = function (block) {
+    const statement_html = generator.statementToCode(block, 'HTML');
+    const code = `<body>${statement_html}</body>\n`;
+    return code;
+};
+
+javascript.javascriptGenerator.forBlock['head_wrapper'] = function (block) {
+    const statement_html = generator.statementToCode(block, 'HTML');
+    const code = `<head>${statement_html}</head>\n`;
+    return code;
+};
+
+javascript.javascriptGenerator.forBlock['header_wrapper'] = function (block) {
+    const statement_html = generator.statementToCode(block, 'HTML');
+    const code = `<header>${statement_html}</header>\n`;
+    return code;
+};
