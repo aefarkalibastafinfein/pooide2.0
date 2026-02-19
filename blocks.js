@@ -13,6 +13,25 @@ Blockly.common.defineBlocksWithJsonArray([
         "tooltip": "Poopy poopy butt dookie"
     },
     {
+        "type": "html_wrapper",
+        "tooltip": "tuff",
+        "helpUrl": "tuff.com",
+        "message0": "HTML %1 %2",
+        "args0": [
+            {
+                "type": "input_dummy",
+                "name": "NAME"
+            },
+            {
+                "type": "input_statement",
+                "name": "HTML"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#474747"
+    },
+    {
         "type": "p",
         "message0": "Paragraph: %1",
         "args0": [{
@@ -84,7 +103,7 @@ Blockly.common.defineBlocksWithJsonArray([
         "previousStatement": null,
         "nextStatement": null,
         "colour": "#00A2BE",
-        "tooltip": "Heading",
+        "tooltip": "Heading with selectable level (H1–H6)",
         "helpUrl": ""
     },
     {
@@ -92,7 +111,7 @@ Blockly.common.defineBlocksWithJsonArray([
         "message0": "<!DOCTYPE html>",
         "nextStatement": null,
         "colour": "#474747",
-        "tooltip": "OOOooooooGagagagagagagaa"
+        "tooltip": "HTML doctype — cannot have blocks above it"
     }
 
 ]);
