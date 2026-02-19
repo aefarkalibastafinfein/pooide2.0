@@ -9,7 +9,7 @@ Blockly.common.defineBlocksWithJsonArray([
         }],
         "previousStatement": null,
         "nextStatement": null,
-        "colour": 230,
+        "colour": "#666666",
         "tooltip": "Poopy poopy butt dookie"
     },
     {
@@ -22,20 +22,41 @@ Blockly.common.defineBlocksWithJsonArray([
         }],
         "previousStatement": null,
         "nextStatement": null,
-        "colour": 160,
-        "tooltip": "AAAaaaaAAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaA"
+        "colour": "#00a2be",
+        "tooltip": "AAAaaaaAAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaA"
     },
     {
         "type": "set_bg",
         "message0": "set bg color to %1",
-        "args0": [{
-            "type": "field_input",
-            "name": "COLOR",
-            "text": "#ffffff"
-        }],
+        "args0": [
+            {
+                "type": "input_value",
+                "name": "COLOR",
+                "check": "Colour",
+                "shadow": {
+                    "type": "colour_hsv_sliders",
+                    "fields": {
+                        "COLOUR": "#ac5151"
+                    }
+                }
+            }
+        ],
         "previousStatement": null,
         "nextStatement": null,
-        "colour": 20,
-        "tooltip": "Not vibecoded"
-    }
+        "colour": "#ff9898"
+    },
+    {
+        type: 'colour_hsv_sliders',
+        message0: 'hsv %1',
+        args0: [
+            {
+                type: 'field_colour_hsv_sliders',
+                name: 'COLOUR',
+                colour: '#ff0000',
+            },
+        ],
+        output: 'Colour',
+        style: 'colour_blocks',
+        tooltip: 'ABABABAbbaabababABbABabBABabABbababABabABbaBABabABbABABabAbabABaBS',
+    },
 ]);
