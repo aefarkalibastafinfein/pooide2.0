@@ -13,6 +13,19 @@ Blockly.common.defineBlocksWithJsonArray([
         "tooltip": "Poopy poopy butt dookie"
     },
     {
+        "type": "custom_style",
+        "message0": "Custom Style: %1",
+        "args0": [{
+            "type": "field_input",
+            "name": "COLOUR",
+            "text": "background-color: red"
+        }],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#00c3ff",
+        "tooltip": "Poopy poopy butt dookie"
+    },
+    {
         "type": "html_wrapper",
         "tooltip": "tuff",
         "helpUrl": "tuff.com",
@@ -28,7 +41,6 @@ Blockly.common.defineBlocksWithJsonArray([
             }
         ],
         "previousStatement": null,
-        "nextStatement": null,
         "colour": "#474747"
     },
     {
@@ -172,6 +184,214 @@ Blockly.common.defineBlocksWithJsonArray([
         "nextStatement": null,
         "colour": "#474747",
         "tooltip": "HTML doctype — cannot have blocks above it"
-    }
+    },
+    {
+        "type": "meta",
+        "message0": "meta & setup",
+        "nextStatement": null,
+        "previousStatement": null,
+        "colour": "#6e6e6e",
+        "tooltip": "HTML meta tags — viewport and charset"
+    },
+    {
+        "type": "footer_wrapper",
+        "tooltip": "tuff",
+        "helpUrl": "tuff.com",
+        "message0": "Footer %1 %2",
+        "args0": [
+            {
+                "type": "input_dummy",
+                "name": "NAME"
+            },
+            {
+                "type": "input_statement",
+                "name": "HTML"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#646464",
+        "tooltip": "AAAaaaaAAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaA"
+    },
+    {
+        "type": "script_wrapper",
+        "tooltip": "tuff",
+        "helpUrl": "tuff.com",
+        "message0": "Script %1 %2",
+        "args0": [
+            {
+                "type": "input_dummy",
+                "name": "NAME"
+            },
+            {
+                "type": "input_statement",
+                "name": "HTML"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#f08b06",
+        "tooltip": "AAAaaaaAAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaA"
+    },
+
+    {
+        "type": "set_style_attribute",
+        "message0": "set style attribute %1 of %2 to %3",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "ATTRIBUTE",
+                "options": [
+                    ["background-color", "background-color"],
+                    ["color", "color"],
+                    ["font-family", "font-family"],
+                    ["font-size", "font-size"],
+                    ["margin", "margin"],
+                    ["padding", "padding"],
+                    ["display", "display"],
+                    ["width", "width"],
+                    ["height", "height"],
+                    ["border", "border"]
+                ]
+            },
+            {
+                "type": "field_input",
+                "name": "ELEMENT",
+                "text": "html"
+            },
+            {
+                "type": "field_input",
+                "name": "VALUE",
+                "text": "black"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#a36cff",
+        "tooltip": "You HAVE to put this in a script wrapper or it wont work 🤤"
+    },
+
+    {
+        "type": "set_style_bg_black",
+        "message0": "set style attribute %1 of %2 to %3",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "ATTRIBUTE",
+                "options": [["background-color", "background-color"]]
+            },
+            {
+                "type": "field_input",
+                "name": "ELEMENT",
+                "text": "html"
+            },
+            {
+                "type": "field_input",
+                "name": "VALUE",
+                "text": "black"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#a36cff",
+        "tooltip": "Set background-color to black on the specified element"
+    },
+
+    {
+        "type": "set_style_color_white",
+        "message0": "set style attribute %1 of %2 to %3",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "ATTRIBUTE",
+                "options": [["color", "color"]]
+            },
+            {
+                "type": "field_input",
+                "name": "ELEMENT",
+                "text": "html"
+            },
+            {
+                "type": "field_input",
+                "name": "VALUE",
+                "text": "white"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#a36cff",
+        "tooltip": "Set color to white on the specified element"
+    },
+
+    {
+        "type": "set_style_font_comic",
+        "message0": "set style attribute %1 of %2 to %3",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "ATTRIBUTE",
+                "options": [["font-family", "font-family"]]
+            },
+            {
+                "type": "field_input",
+                "name": "ELEMENT",
+                "text": "html"
+            },
+            {
+                "type": "field_input",
+                "name": "VALUE",
+                "text": "Comic Sans MS"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#a36cff",
+        "tooltip": "Set font-family on the specified element"
+    },
+
+    {
+        "type": "href_link",
+        "message0": "External file %1 URL: %2",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "TYPE",
+                "options": [
+                    ["Stylesheet", "stylesheet"],
+                    ["Script", "script"]
+                ]
+            },
+            {
+                "type": "field_input",
+                "name": "URL",
+                "text": "http://afkdev.me/index.css"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#ffa500",
+        "tooltip": "Include an external CSS or JS file via href/src"
+    },
+
+    {
+        "type": "style_wrapper",
+        "tooltip": "tuff",
+        "helpUrl": "",
+        "message0": "Style %1 %2",
+        "args0": [
+            {
+                "type": "input_dummy",
+                "name": "NAME"
+            },
+            {
+                "type": "input_statement",
+                "name": "HTML"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#00c3ff",
+        "tooltip": "Wrap CSS rules in a <style> block"
+    },
 
 ]);
