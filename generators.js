@@ -25,25 +25,25 @@ javascript.javascriptGenerator.forBlock['heading'] = function (block) {
 };
 
 javascript.javascriptGenerator.forBlock['html_wrapper'] = function (block) {
-    const statement_html = generator.statementToCode(block, 'HTML');
+    const statement_html = javascript.javascriptGenerator.statementToCode(block, 'HTML');
     const code = `<html>${statement_html}</html>\n`;
     return code;
 };
 
 javascript.javascriptGenerator.forBlock['body_wrapper'] = function (block) {
-    const statement_html = generator.statementToCode(block, 'HTML');
+    const statement_html = javascript.javascriptGenerator.statementToCode(block, 'HTML');
     const code = `<body>${statement_html}</body>\n<!-- made with poo ide 2.0 (http://afkdev.me/pooide.html) -->\n`;
     return code;
 };
 
 javascript.javascriptGenerator.forBlock['head_wrapper'] = function (block) {
-    const statement_html = generator.statementToCode(block, 'HTML');
+    const statement_html = javascript.javascriptGenerator.statementToCode(block, 'HTML');
     const code = `<head>${statement_html}</head>\n`;
     return code;
 };
 
 javascript.javascriptGenerator.forBlock['header_wrapper'] = function (block) {
-    const statement_html = generator.statementToCode(block, 'HTML');
+    const statement_html = javascript.javascriptGenerator.statementToCode(block, 'HTML');
     const code = `<header>${statement_html}</header>\n`;
     return code;
 };
@@ -51,18 +51,19 @@ javascript.javascriptGenerator.forBlock['meta'] = function (block) {
     return ` <meta name="viewport" content="width=device-width, initial-scale=1.0">\n<meta charset="UTF-8">\n`;
 };
 javascript.javascriptGenerator.forBlock['footer_wrapper'] = function (block) {
-    const statement_html = generator.statementToCode(block, 'HTML');
+    const statement_html = javascript.javascriptGenerator.statementToCode(block, 'HTML');
     const code = `<footer>${statement_html}</footer>\n`;
     return code;
 };
 javascript.javascriptGenerator.forBlock['script_wrapper'] = function (block) {
-    const statement_html = generator.statementToCode(block, 'HTML');
+    const statement_html = javascript.javascriptGenerator.statementToCode(block, 'HTML');
     const code = `<script>${statement_html}</script>\n`;
     return code;
 };
 
 javascript.javascriptGenerator.forBlock['href_link'] = function (block) {
     const type = block.getFieldValue('TYPE');
+    // poop 67 🤤 this is a very wierd way to do this but it works and i dont care
     const url = block.getFieldValue('URL') || '';
     if (type === 'stylesheet') {
         return `<link rel="stylesheet" href="${url}">\n`;
@@ -76,13 +77,8 @@ javascript.javascriptGenerator.forBlock['set_style_attribute'] = function (block
     const value = block.getFieldValue('VALUE') || '';
     const escAttr = attribute.replace(/'/g, "\\'");
     const escValue = value.replace(/'/g, "\\'");
-    const escElement = element.replace(/'/g, "\\'");
 
-    let selectorCode = 'document.documentElement';
-    if (escElement === 'body') selectorCode = 'document.body';
-    else if (escElement && escElement !== 'html') selectorCode = `document.querySelector('${escElement}')`;
-
-    return `${selectorCode}.style.setProperty('${escAttr}', '${escValue}');\n`;
+    return `${element} { ${escAttr}: ${escValue}; }\n`;
 };
 
 javascript.javascriptGenerator.forBlock['set_style_bg_black'] = function (block) {
@@ -131,7 +127,7 @@ javascript.javascriptGenerator.forBlock['set_style_font_comic'] = function (bloc
 };
 
 javascript.javascriptGenerator.forBlock['style_wrapper'] = function (block) {
-    const statement_html = generator.statementToCode(block, 'HTML');
+    const statement_html = javascript.javascriptGenerator.statementToCode(block, 'HTML');
     const code = `<style>${statement_html}</style>\n`;
     return code;
 };
