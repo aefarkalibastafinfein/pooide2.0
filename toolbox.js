@@ -5,20 +5,8 @@ const myToolbox = {
         { "kind": "block", "type": "page_title" },
         { "kind": "block", "type": "meta" },
         { "kind": "block", "type": "p" },
-        {
-            "kind": "block",
-            "type": "set_bg",
-            "inputs": {
-                "COLOR": {
-                    "shadow": {
-                        "type": "colour_hsv_sliders",
-                        "fields": {
-                            "COLOUR": "#ac5151"
-                        }
-                    }
-                }
-            }
-        },
+        { "kind": "block", "type": "br" },
+        { "kind": "block", "type": "hr" },
         { "kind": "block", "type": "html_wrapper" },
         { "kind": "block", "type": "head_wrapper" },
         { "kind": "block", "type": "body_wrapper" },

@@ -186,6 +186,22 @@ Blockly.common.defineBlocksWithJsonArray([
         "tooltip": "HTML doctype — cannot have blocks above it"
     },
     {
+        "type": "br",
+        "message0": "<br>",
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#00a2be",
+        "tooltip": "HTML line break"
+    },
+    {
+        "type": "hr",
+        "message0": "<hr>",
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#00a2be",
+        "tooltip": "HTML horizontal rule"
+    },
+    {
         "type": "meta",
         "message0": "meta & setup",
         "nextStatement": null,
