@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
+        <title>Poo IDE 2</title>
 
         <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
         <script src="https://unpkg.com/blockly/blocks_compressed.js"></script>
@@ -12,27 +12,134 @@
         <script src="https://unpkg.com/blockly/msg/en.js"></script>
         <script src="https://unpkg.com/@blockly/field-colour-hsv-sliders"></script>
         <script src="https://unpkg.com/@blockly/toolbox-search"></script>
+        <script src="https://unpkg.com/@blockly/continuous-toolbox"></script>
 
         <script src="blocks.js"></script>
         <script src="generators.js"></script>
         <script src="toolbox.js"></script>
+        <script src="zeus-renderer.js"></script>
 
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+                overflow: hidden;
+                font-family: sans-serif;
+            }
+
+            #toolbar {
+                display: flex;
+                gap: 6px;
+                padding: 6px 10px;
+                background: #f0f0f0;
+                border-bottom: 1px solid #ccc;
+            }
+
+            #toolbar button {
+                padding: 4px 12px;
+                cursor: pointer;
+            }
+
+            #main {
+                display: flex;
+                flex: 1;
+                overflow: hidden;
+            }
+
+            #blocklyDiv {
+                flex: 1;
+                height: 100%;
+            }
+        </style>
     </head>
     <!-- This isnt vibecoded. Watch my every step.-->
 
     <body>
-        <div style="margin-top:8px">
-            <button onclick="downloadBlocksXml()">Save</button>
-            <button onclick="downloadGeneratedPage()">Export HTML</button>
-            <button onclick="runGeneratedPage()">Preview</button>
+        <div id="toolbar">
+            <span class="brand">Poo IDE 2</span>
+            <div class="sep"></div>
+            <button onclick="downloadBlocksXml()" title="Save workspace as XML">Save</button>
+            <button onclick="loadBlocksXml()" title="Load workspace from XML file">Load</button>
+            <div class="sep"></div>
+            <button onclick="downloadGeneratedPage()" title="Export generated HTML">Export HTML</button>
+            <button onclick="runGeneratedPage()" title="Preview in new tab">Preview</button>
+        </div>
+
+        <div id="main">
+            <div id="blocklyDiv"></div>
         </div>
 
         <script src="download.js"></script>
-        <div id="blocklyDiv" style="height: 946px; width: 1919px;"></div>
         <script>
+            registerContinuousToolbox();
+
             const workspace = Blockly.inject('blocklyDiv', {
-                renderer: 'zelos',
-                toolbox: myToolbox
+                renderer: 'zeus',
+                toolbox: myToolbox,
+                plugins: {
+                    toolbox: ContinuousToolbox,
+                    flyoutsVerticalToolbox: ContinuousFlyout,
+                    metricsManager: ContinuousMetrics,
+                },
+                zoom: {
+                    controls: true,
+                    wheel: true,
+                    startScale: 1.0,
+                    maxScale: 3,
+                    minScale: 0.3,
+                    scaleSpeed: 1.12,
+                    pinch: true
+                },
+                trashcan: true,
+                move: {
+                    scrollbars: {
+                        horizontal: true,
+                        vertical: true
+                    },
+                    drag: true,
+                    wheel: false
+                },
+                grid: {
+                    spacing: 25,
+                    length: 3,
+                    colour: '#333',
+                    snap: true
+                },
+                sounds: true,
+                media: 'https://unpkg.com/blockly/media/'
+            });
+
+            workspace.addChangeListener(function (e) {
+                if (e.isUiEvent) return;
+                // autosave to localStorage
+                try {
+                    var xml = Blockly.Xml.workspaceToDom(workspace);
+                    var text = Blockly.Xml.domToText(xml);
+                    localStorage.setItem('pooide2_autosave', text);
+                } catch (_) { }
+            });
+
+            // ── Restore autosaved workspace ────────────────────
+            (function () {
+                try {
+                    var saved = localStorage.getItem('pooide2_autosave');
+                    if (saved) {
+                        var xml = Blockly.utils.xml.textToDom(saved);
+                        Blockly.Xml.domToWorkspace(xml, workspace);
+                    }
+                } catch (_) { }
+            })();
+
+            // ── Responsive resize ──────────────────────────────
+            window.addEventListener('resize', function () {
+                Blockly.svgResize(workspace);
             });
         </script>
 

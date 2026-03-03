@@ -25,6 +25,30 @@
         downloadBlob(xmlText, filename || 'blocks.xml', 'text/xml');
     }
 
+    function loadBlocksXml() {
+        var ws = getWorkspace();
+        if (!ws) { alert('Workspace not found'); return; }
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.xml,text/xml';
+        input.onchange = function (e) {
+            var file = e.target.files[0];
+            if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function (ev) {
+                try {
+                    var xml = Blockly.utils.xml.textToDom(ev.target.result);
+                    ws.clear();
+                    Blockly.Xml.domToWorkspace(xml, ws);
+                } catch (err) {
+                    alert('Failed to load XML: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        };
+        input.click();
+    }
+
     function downloadGeneratedPage(filename) {
         var ws = getWorkspace();
         if (!ws) { alert('Workspace not found'); return; }
@@ -37,7 +61,7 @@
         if (!ws) { alert('Workspace not found'); return; }
         var code = Blockly.JavaScript.workspaceToCode(ws);
         var w = window.open('', '_blank');
-        if (!w) { alert('Popup blocked or failed to open new window (i think i have no fucking idea)'); return; }
+        if (!w) { alert('Popup blocked or failed to open new window'); return; }
         w.document.open();
         w.document.write(code);
         w.document.close();
@@ -45,6 +69,7 @@
     }
 
     window.downloadBlocksXml = downloadBlocksXml;
+    window.loadBlocksXml = loadBlocksXml;
     window.downloadGeneratedPage = downloadGeneratedPage;
     window.runGeneratedPage = runGeneratedPage;
 })();
