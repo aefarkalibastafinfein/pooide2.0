@@ -187,7 +187,7 @@ Blockly.common.defineBlocksWithJsonArray([
     },
     {
         "type": "br",
-        "message0": "<br>",
+        "message0": "line break",
         "previousStatement": null,
         "nextStatement": null,
         "colour": "#00a2be",
@@ -195,7 +195,7 @@ Blockly.common.defineBlocksWithJsonArray([
     },
     {
         "type": "hr",
-        "message0": "<hr>",
+        "message0": "horizontal rule",
         "previousStatement": null,
         "nextStatement": null,
         "colour": "#00a2be",
