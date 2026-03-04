@@ -57,6 +57,90 @@
                 flex: 1;
                 height: 100%;
             }
+
+            #settingsOverlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.4);
+                z-index: 100;
+            }
+
+            #settingsOverlay.open {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            #settingsPanel {
+                background: #f0f0f0;
+                border: 1px solid #ccc;
+                padding: 16px 20px;
+                width: 340px;
+                max-height: 80vh;
+                overflow-y: auto;
+                font-family: sans-serif;
+                font-size: 13px;
+            }
+
+            #settingsPanel h2 {
+                margin: 0 0 12px;
+                font-size: 15px;
+            }
+
+            #settingsPanel label {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin: 6px 0;
+            }
+
+            #settingsPanel select,
+            #settingsPanel input[type=number],
+            #settingsPanel input[type=color] {
+                padding: 2px 6px;
+                border: 1px solid #ccc;
+                border-radius: 3px;
+                font-size: 13px;
+            }
+
+            #settingsPanel select {
+                width: 120px;
+            }
+
+            #settingsPanel input[type=number] {
+                width: 70px;
+            }
+
+            #settingsPanel .section {
+                margin-top: 10px;
+                padding-top: 8px;
+                border-top: 1px solid #ddd;
+            }
+
+            #settingsPanel .section-title {
+                font-weight: bold;
+                margin-bottom: 6px;
+            }
+
+            #settingsPanel .btn-row {
+                display: flex;
+                gap: 6px;
+                margin-top: 14px;
+                justify-content: flex-end;
+            }
+
+            #settingsPanel button {
+                padding: 4px 14px;
+                cursor: pointer;
+                border: 1px solid #ccc;
+                border-radius: 3px;
+                background: #fff;
+            }
+
+            #settingsPanel button:hover {
+                background: #e8e8e8;
+            }
         </style>
     </head>
     <!-- This isnt vibecoded. Watch my every step.-->
@@ -70,6 +154,49 @@
             <div class="sep"></div>
             <button onclick="downloadGeneratedPage()" title="Export generated HTML">Export HTML</button>
             <button onclick="runGeneratedPage()" title="Preview in new tab">Preview</button>
+            <button onclick="openSettings()" title="Workspace settings">Settings</button>
+        </div>
+
+        <div id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
+            <div id="settingsPanel">
+                <h2>Settings</h2>
+
+                <div class="section">
+                    <div class="section-title">Renderer</div>
+                    <label>Renderer <select id="s-renderer">
+                            <option value="zeus">Zeus</option>
+                            <option value="zelos">Zelos</option>
+                            <option value="geras">Geras</option>
+                            <option value="thrasos">Thrasos</option>
+                        </select></label>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Grid</div>
+                    <label>Snap to grid <input type="checkbox" id="s-grid-snap"></label>
+                    <label>Spacing <input type="number" id="s-grid-spacing" min="5" max="100"></label>
+                    <label>Colour <input type="color" id="s-grid-colour"></label>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Zoom</div>
+                    <label>Scroll to zoom <input type="checkbox" id="s-zoom-wheel"></label>
+                    <label>Zoom controls <input type="checkbox" id="s-zoom-controls"></label>
+                    <label>Min scale <input type="number" id="s-zoom-min" min="0.1" max="1" step="0.1"></label>
+                    <label>Max scale <input type="number" id="s-zoom-max" min="1" max="10" step="0.5"></label>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Other</div>
+                    <label>Trashcan <input type="checkbox" id="s-trashcan"></label>
+                    <label>Sounds <input type="checkbox" id="s-sounds"></label>
+                </div>
+
+                <div class="btn-row">
+                    <button onclick="applySettings()">Apply</button>
+                    <button onclick="closeSettings()">Cancel</button>
+                </div>
+            </div>
         </div>
 
         <div id="main">
@@ -80,7 +207,7 @@
         <script>
             registerContinuousToolbox();
 
-            const workspace = Blockly.inject('blocklyDiv', {
+            var workspace = Blockly.inject('blocklyDiv', {
                 renderer: 'zeus',
                 toolbox: myToolbox,
                 plugins: {
@@ -141,6 +268,94 @@
             window.addEventListener('resize', function () {
                 Blockly.svgResize(workspace);
             });
+
+            // ── Settings panel ──────────────────────────────────
+            function openSettings() {
+                document.getElementById('s-renderer').value = workspace.options.renderer || 'zeus';
+                var g = workspace.options.gridOptions || {};
+                document.getElementById('s-grid-snap').checked = !!g.snap;
+                document.getElementById('s-grid-spacing').value = g.spacing || 25;
+                document.getElementById('s-grid-colour').value = g.colour || '#333333';
+                var z = workspace.options.zoomOptions || {};
+                document.getElementById('s-zoom-wheel').checked = !!z.wheel;
+                document.getElementById('s-zoom-controls').checked = !!z.controls;
+                document.getElementById('s-zoom-min').value = z.minScale || 0.3;
+                document.getElementById('s-zoom-max').value = z.maxScale || 3;
+                document.getElementById('s-trashcan').checked = !!workspace.options.hasTrashcan;
+                document.getElementById('s-sounds').checked = !!workspace.options.hasSounds;
+                document.getElementById('settingsOverlay').classList.add('open');
+            }
+
+            function closeSettings() {
+                document.getElementById('settingsOverlay').classList.remove('open');
+            }
+
+            function applySettings() {
+                var xml = Blockly.Xml.workspaceToDom(workspace);
+                var xmlText = Blockly.Xml.domToText(xml);
+
+                var renderer = document.getElementById('s-renderer').value;
+                var gridSnap = document.getElementById('s-grid-snap').checked;
+                var gridSpacing = parseInt(document.getElementById('s-grid-spacing').value) || 25;
+                var gridColour = document.getElementById('s-grid-colour').value;
+                var zoomWheel = document.getElementById('s-zoom-wheel').checked;
+                var zoomControls = document.getElementById('s-zoom-controls').checked;
+                var zoomMin = parseFloat(document.getElementById('s-zoom-min').value) || 0.3;
+                var zoomMax = parseFloat(document.getElementById('s-zoom-max').value) || 3;
+                var trashcan = document.getElementById('s-trashcan').checked;
+                var sounds = document.getElementById('s-sounds').checked;
+
+                workspace.dispose();
+                var div = document.getElementById('blocklyDiv');
+                div.innerHTML = '';
+
+                window.workspace = Blockly.inject('blocklyDiv', {
+                    renderer: renderer,
+                    toolbox: myToolbox,
+                    plugins: {
+                        toolbox: ContinuousToolbox,
+                        flyoutsVerticalToolbox: ContinuousFlyout,
+                        metricsManager: ContinuousMetrics,
+                    },
+                    zoom: {
+                        controls: zoomControls,
+                        wheel: zoomWheel,
+                        startScale: 1.0,
+                        maxScale: zoomMax,
+                        minScale: zoomMin,
+                        scaleSpeed: 1.12,
+                        pinch: true
+                    },
+                    trashcan: trashcan,
+                    move: { scrollbars: { horizontal: true, vertical: true }, drag: true, wheel: false },
+                    grid: { spacing: gridSpacing, length: 3, colour: gridColour, snap: gridSnap },
+                    sounds: sounds,
+                    media: 'https://unpkg.com/blockly/media/'
+                });
+
+                workspace = window.workspace;
+
+                workspace.addChangeListener(function (e) {
+                    if (e.isUiEvent) return;
+                    try {
+                        var x = Blockly.Xml.workspaceToDom(workspace);
+                        localStorage.setItem('pooide2_autosave', Blockly.Xml.domToText(x));
+                    } catch (_) { }
+                });
+
+                try {
+                    var dom = Blockly.utils.xml.textToDom(xmlText);
+                    Blockly.Xml.domToWorkspace(dom, workspace);
+                } catch (_) { }
+
+                localStorage.setItem('pooide2_settings', JSON.stringify({
+                    renderer: renderer, gridSnap: gridSnap, gridSpacing: gridSpacing,
+                    gridColour: gridColour, zoomWheel: zoomWheel, zoomControls: zoomControls,
+                    zoomMin: zoomMin, zoomMax: zoomMax, trashcan: trashcan, sounds: sounds
+                }));
+
+                closeSettings();
+            }
         </script>
 
         <!-- Poopy butt dookie-->

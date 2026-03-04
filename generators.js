@@ -1,3 +1,8 @@
+javascript.javascriptGenerator.forBlock['colour_hsv_sliders'] = function (block) {
+    const colour = block.getFieldValue('COLOUR') || '#ff9100';
+    return ["'" + colour + "'", javascript.Order.ATOMIC];
+};
+
 javascript.javascriptGenerator.forBlock['page_title'] = function (block) {
     const text = block.getFieldValue('TEXT');
     return ` <title>${text}</title>\n`;
@@ -16,8 +21,10 @@ javascript.javascriptGenerator.forBlock['p'] = function (block) {
     return `<p>${content}</p>\n`;
 };
 javascript.javascriptGenerator.forBlock['set_bg'] = function (block) {
-    const color = block.getFieldValue('COLOR');
-    return `'${color}';\n`;
+    const color = javascript.javascriptGenerator.valueToCode(block, 'COLOR', javascript.Order.ATOMIC) || "'#ac5151'";
+    // Strip quotes from the colour value
+    const c = color.replace(/^['"]|['"]$/g, '');
+    return `html { background-color: ${c}; }\n`;
 };
 
 javascript.javascriptGenerator.forBlock['custom_style'] = function (block) {
@@ -91,45 +98,21 @@ javascript.javascriptGenerator.forBlock['set_style_bg_black'] = function (block)
     const attribute = block.getFieldValue('ATTRIBUTE') || 'background-color';
     const element = block.getFieldValue('ELEMENT') || 'html';
     const value = block.getFieldValue('VALUE') || 'black';
-    const escAttr = attribute.replace(/'/g, "\\'");
-    const escValue = value.replace(/'/g, "\\'");
-    const escElement = element.replace(/'/g, "\\'");
-
-    let selectorCode = 'document.documentElement';
-    if (escElement === 'body') selectorCode = 'document.body';
-    else if (escElement && escElement !== 'html') selectorCode = `document.querySelector('${escElement}')`;
-
-    return `${selectorCode}.style.setProperty('${escAttr}', '${escValue}');\n`;
+    return `${element} { ${attribute}: ${value}; }\n`;
 };
 
 javascript.javascriptGenerator.forBlock['set_style_color_white'] = function (block) {
     const attribute = block.getFieldValue('ATTRIBUTE') || 'color';
     const element = block.getFieldValue('ELEMENT') || 'html';
     const value = block.getFieldValue('VALUE') || 'white';
-    const escAttr = attribute.replace(/'/g, "\\'");
-    const escValue = value.replace(/'/g, "\\'");
-    const escElement = element.replace(/'/g, "\\'");
-
-    let selectorCode = 'document.documentElement';
-    if (escElement === 'body') selectorCode = 'document.body';
-    else if (escElement && escElement !== 'html') selectorCode = `document.querySelector('${escElement}')`;
-
-    return `${selectorCode}.style.setProperty('${escAttr}', '${escValue}');\n`;
+    return `${element} { ${attribute}: ${value}; }\n`;
 };
 
 javascript.javascriptGenerator.forBlock['set_style_font_comic'] = function (block) {
     const attribute = block.getFieldValue('ATTRIBUTE') || 'font-family';
     const element = block.getFieldValue('ELEMENT') || 'html';
     const value = block.getFieldValue('VALUE') || 'Comic Sans MS';
-    const escAttr = attribute.replace(/'/g, "\\'");
-    const escValue = value.replace(/'/g, "\\'");
-    const escElement = element.replace(/'/g, "\\'");
-
-    let selectorCode = 'document.documentElement';
-    if (escElement === 'body') selectorCode = 'document.body';
-    else if (escElement && escElement !== 'html') selectorCode = `document.querySelector('${escElement}')`;
-
-    return `${selectorCode}.style.setProperty('${escAttr}', '${escValue}');\n`;
+    return `${element} { ${attribute}: ${value}; }\n`;
 };
 
 javascript.javascriptGenerator.forBlock['style_wrapper'] = function (block) {

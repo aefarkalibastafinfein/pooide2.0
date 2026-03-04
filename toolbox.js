@@ -46,6 +46,9 @@ const myToolbox = {
             "contents": [
                 { "kind": "block", "type": "style_wrapper" },
                 { "kind": "block", "type": "set_style_attribute" },
+                { "kind": "block", "type": "set_style_bg_black" },
+                { "kind": "block", "type": "set_style_color_white" },
+                { "kind": "block", "type": "set_style_font_comic" },
                 { "kind": "block", "type": "custom_style" },
                 { "kind": "block", "type": "set_bg" }
             ]
@@ -55,10 +58,7 @@ const myToolbox = {
             "name": "Script",
             "colour": "#f08b06",
             "contents": [
-                { "kind": "block", "type": "script_wrapper" },
-                { "kind": "block", "type": "set_style_bg_black" },
-                { "kind": "block", "type": "set_style_color_white" },
-                { "kind": "block", "type": "set_style_font_comic" }
+                { "kind": "block", "type": "script_wrapper" }
             ]
         },
         {
