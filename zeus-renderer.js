@@ -1,6 +1,5 @@
 /**
  * Zeus Renderer — stolen from PenguinBuilder/PenguinBuilder.github.io
-
  */
 (function () {
     const svgPaths = Blockly.utils.svgPaths;

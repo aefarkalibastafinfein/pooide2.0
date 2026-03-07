@@ -1,12 +1,38 @@
 // whyd i put this RIGHT at the top
+function getStringInputCode(block, inputName, fallbackText) {
+    return javascript.javascriptGenerator.valueToCode(
+        block,
+        inputName,
+        javascript.Order.NONE
+    ) || JSON.stringify(fallbackText || '');
+}
+
+function getStringInputText(block, inputName, fallbackText) {
+    const code = getStringInputCode(block, inputName, fallbackText);
+    try {
+        return JSON.parse(code);
+    } catch (_) {
+        return code.replace(/^['"]|['"]$/g, '');
+    }
+}
+
 javascript.javascriptGenerator.forBlock['divvytuff'] = function (block) {
-    const divName = block.getFieldValue('DIV_NAME') || '';
-    const divClass = block.getFieldValue('DIV_CLASS') || '';
+    const divName = getStringInputText(block, 'DIV_NAME', 'myDiv');
+    const divClass = getStringInputText(block, 'DIV_CLASS', 'myClass');
     const statement_html = javascript.javascriptGenerator.statementToCode(block, 'HTML');
     let attrs = '';
     if (divName) attrs += ` id="${divName}"`;
     if (divClass) attrs += ` class="${divClass}"`;
     return `<div${attrs}>${statement_html}</div>\n`;
+};
+javascript.javascriptGenerator.forBlock['button_wrapper'] = function (block) {
+    const label = getStringInputText(block, 'LABEL', 'Click me')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    const actions = javascript.javascriptGenerator.statementToCode(block, 'ACTIONS').trim();
+    const onclick = actions ? ` onclick="${actions.replace(/"/g, '&quot;')}"` : '';
+    return `<button${onclick}>${label}</button>\n`;
 };
 javascript.javascriptGenerator.forBlock['colour_hsv_sliders'] = function (block) {
     const colour = block.getFieldValue('COLOUR') || '#ff9100';
@@ -14,7 +40,7 @@ javascript.javascriptGenerator.forBlock['colour_hsv_sliders'] = function (block)
 };
 
 javascript.javascriptGenerator.forBlock['page_title'] = function (block) {
-    const text = block.getFieldValue('TEXT');
+    const text = getStringInputText(block, 'TEXT', 'My Website');
     return ` <title>${text}</title>\n`;
 };
 javascript.javascriptGenerator.forBlock['doctype'] = function (block) {
@@ -27,23 +53,17 @@ javascript.javascriptGenerator.forBlock['hr'] = function (block) {
     return ` <hr>\n`;
 };
 javascript.javascriptGenerator.forBlock['p'] = function (block) {
-    const content = block.getFieldValue('CONTENT');
+    const content = getStringInputText(block, 'CONTENT', 'Testing testing');
     return `<p>${content}</p>\n`;
-};
-javascript.javascriptGenerator.forBlock['set_bg'] = function (block) {
-    const color = javascript.javascriptGenerator.valueToCode(block, 'COLOR', javascript.Order.ATOMIC) || "'#ac5151'";
-    // Strip quotes from the colour value
-    const c = color.replace(/^['"]|['"]$/g, '');
-    return `html { background-color: ${c}; }\n`;
 };
 
 javascript.javascriptGenerator.forBlock['custom_style'] = function (block) {
-    const text = block.getFieldValue('TEXT');
-    return ` <style>${text}</style>\n`;
+    const styleText = block.getFieldValue('COLOUR') || '';
+    return ` <style>${styleText}</style>\n`;
 };
 javascript.javascriptGenerator.forBlock['heading'] = function (block) {
     const level = block.getFieldValue('LEVEL') || 'h1';
-    const text = block.getFieldValue('TEXT') || '';
+    const text = getStringInputText(block, 'TEXT', 'Heading text');
     return `<${level}>${text}</${level}>\n`;
 };
 
@@ -83,11 +103,48 @@ javascript.javascriptGenerator.forBlock['script_wrapper'] = function (block) {
     const code = `<script>${statement_html}</script>\n`;
     return code;
 };
+javascript.javascriptGenerator.forBlock['alert_block'] = function (block) {
+    const value = javascript.javascriptGenerator.valueToCode(block, 'VALUE', javascript.Order.NONE) || '""';
+    return `alert(${value});\n`;
+};
+javascript.javascriptGenerator.forBlock['log_block'] = function (block) {
+    const value = javascript.javascriptGenerator.valueToCode(block, 'VALUE', javascript.Order.NONE) || '""';
+    return `console.log(${value});\n`;
+};
+javascript.javascriptGenerator.forBlock['redirect_block'] = function (block) {
+    const url = getStringInputCode(block, 'URL', 'https://example.com');
+    return `window.location.href = ${url};\n`;
+};
+javascript.javascriptGenerator.forBlock['string_value'] = function (block) {
+    const text = block.getFieldValue('TEXT') || '';
+    return [JSON.stringify(text), javascript.Order.ATOMIC];
+};
+javascript.javascriptGenerator.forBlock['to_string'] = function (block) {
+    const value = javascript.javascriptGenerator.valueToCode(block, 'VALUE', javascript.Order.NONE) || '""';
+    const trimmed = value.trim();
+    if (/^(["']).*\1$/.test(trimmed)) {
+        return [trimmed, javascript.Order.ATOMIC];
+    }
+    return [JSON.stringify(trimmed), javascript.Order.ATOMIC];
+};
+javascript.javascriptGenerator.forBlock['number_value'] = function (block) {
+    const value = Number(block.getFieldValue('VALUE'));
+    return [String(value), javascript.Order.ATOMIC];
+};
+javascript.javascriptGenerator.forBlock['boolean_value'] = function (block) {
+    const value = block.getFieldValue('VALUE') === 'false' ? 'false' : 'true';
+    return [value, javascript.Order.ATOMIC];
+};
+javascript.javascriptGenerator.forBlock['raw_expression'] = function (block) {
+    const code = getStringInputText(block, 'CODE', 'document.title') || 'undefined';
+    return [code, javascript.Order.NONE];
+};
+
 
 javascript.javascriptGenerator.forBlock['href_link'] = function (block) {
     const type = block.getFieldValue('TYPE');
     // poop 67 🤤 this is a very wierd way to do this but it works and i dont care
-    const url = block.getFieldValue('URL') || '';
+    const url = getStringInputText(block, 'URL', 'http://afkdev.me/index.css');
     if (type === 'stylesheet') {
         return `<link rel="stylesheet" href="${url}">\n`;
     }
@@ -96,33 +153,12 @@ javascript.javascriptGenerator.forBlock['href_link'] = function (block) {
 
 javascript.javascriptGenerator.forBlock['set_style_attribute'] = function (block) {
     const attribute = block.getFieldValue('ATTRIBUTE') || '';
-    const element = block.getFieldValue('ELEMENT') || 'html';
-    const value = block.getFieldValue('VALUE') || '';
+    const element = getStringInputText(block, 'ELEMENT', 'html');
+    const value = getStringInputText(block, 'VALUE', 'black');
     const escAttr = attribute.replace(/'/g, "\\'");
     const escValue = value.replace(/'/g, "\\'");
 
     return `${element} { ${escAttr}: ${escValue}; }\n`;
-};
-
-javascript.javascriptGenerator.forBlock['set_style_bg_black'] = function (block) {
-    const attribute = block.getFieldValue('ATTRIBUTE') || 'background-color';
-    const element = block.getFieldValue('ELEMENT') || 'html';
-    const value = block.getFieldValue('VALUE') || 'black';
-    return `${element} { ${attribute}: ${value}; }\n`;
-};
-
-javascript.javascriptGenerator.forBlock['set_style_color_white'] = function (block) {
-    const attribute = block.getFieldValue('ATTRIBUTE') || 'color';
-    const element = block.getFieldValue('ELEMENT') || 'html';
-    const value = block.getFieldValue('VALUE') || 'white';
-    return `${element} { ${attribute}: ${value}; }\n`;
-};
-
-javascript.javascriptGenerator.forBlock['set_style_font_comic'] = function (block) {
-    const attribute = block.getFieldValue('ATTRIBUTE') || 'font-family';
-    const element = block.getFieldValue('ELEMENT') || 'html';
-    const value = block.getFieldValue('VALUE') || 'Comic Sans MS';
-    return `${element} { ${attribute}: ${value}; }\n`;
 };
 
 javascript.javascriptGenerator.forBlock['style_wrapper'] = function (block) {

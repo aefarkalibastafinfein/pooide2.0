@@ -13,6 +13,23 @@
         <script src="https://unpkg.com/@blockly/field-colour-hsv-sliders"></script>
         <script src="https://unpkg.com/@blockly/toolbox-search"></script>
         <script src="https://unpkg.com/@blockly/continuous-toolbox"></script>
+        <script src="https://unpkg.com/@blockly/field-dependent-dropdown"></script>
+        <script src="https://unpkg.com/@blockly/field-multilineinput"></script>
+        <script>
+            registerFieldMultilineInput();
+            function forceInlineInputs(ws) {
+                ws.getAllBlocks(false).forEach(function (block) {
+                    block.setInputsInline(true);
+                });
+            }
+            // i dont even have to explain either of these do i
+            // its in the name gng
+            forceInlineInputs(workspace);
+            workspace.addChangeListener(function () {
+                forceInlineInputs(workspace);
+            });
+
+        </script>
 
         <script src="blocks.js"></script>
         <script src="generators.js"></script>
@@ -162,7 +179,6 @@
                 <h2>Settings</h2>
 
                 <div class="section">
-                    <div class="section-title">Renderer</div>
                     <label>Renderer <select id="s-renderer">
                             <option value="zeus">Zeus</option>
                             <option value="zelos">Zelos</option>

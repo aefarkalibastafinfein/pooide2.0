@@ -22,11 +22,12 @@ const myToolbox = {
         {
             "kind": "category",
             "name": "Layout",
-            "colour": "#646464",
+            "colour": "#474747",
             "contents": [
                 { "kind": "block", "type": "header_wrapper" },
                 { "kind": "block", "type": "divvytuff" },
-                { "kind": "block", "type": "footer_wrapper" }
+                { "kind": "block", "type": "footer_wrapper" },
+
             ]
         },
         {
@@ -49,7 +50,7 @@ const myToolbox = {
                 { "kind": "block", "type": "set_style_attribute" },
                 // removed like 3 because they were lowkey useless
                 { "kind": "block", "type": "custom_style" },
-                { "kind": "block", "type": "set_bg" }
+                { "kind": "block", "type": "colour_hsv_sliders" }
             ]
         },
         {
@@ -57,7 +58,16 @@ const myToolbox = {
             "name": "Script",
             "colour": "#f08b06",
             "contents": [
-                { "kind": "block", "type": "script_wrapper" }
+                { "kind": "block", "type": "script_wrapper" },
+                { "kind": "block", "type": "button_wrapper" },
+                { "kind": "block", "type": "alert_block" },
+                { "kind": "block", "type": "log_block" },
+                { "kind": "block", "type": "redirect_block" },
+                { "kind": "block", "type": "string_value" },
+                { "kind": "block", "type": "to_string" },
+                { "kind": "block", "type": "number_value" },
+                { "kind": "block", "type": "boolean_value" },
+                { "kind": "block", "type": "raw_expression" },
             ]
         },
         {
@@ -71,16 +81,6 @@ const myToolbox = {
         {
             "kind": "sep"
         },
-        {
-            "kind": "category",
-            "name": "Colour",
-            "colour": "#ff9898",
-            "contents": [
-                {
-                    "kind": "block",
-                    "type": "colour_hsv_sliders"
-                }
-            ]
-        }
+
     ]
 };
