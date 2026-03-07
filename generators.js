@@ -1,3 +1,13 @@
+// whyd i put this RIGHT at the top
+javascript.javascriptGenerator.forBlock['divvytuff'] = function (block) {
+    const divName = block.getFieldValue('DIV_NAME') || '';
+    const divClass = block.getFieldValue('DIV_CLASS') || '';
+    const statement_html = javascript.javascriptGenerator.statementToCode(block, 'HTML');
+    let attrs = '';
+    if (divName) attrs += ` id="${divName}"`;
+    if (divClass) attrs += ` class="${divClass}"`;
+    return `<div${attrs}>${statement_html}</div>\n`;
+};
 javascript.javascriptGenerator.forBlock['colour_hsv_sliders'] = function (block) {
     const colour = block.getFieldValue('COLOUR') || '#ff9100';
     return ["'" + colour + "'", javascript.Order.ATOMIC];

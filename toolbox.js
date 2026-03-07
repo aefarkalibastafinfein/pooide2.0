@@ -25,6 +25,7 @@ const myToolbox = {
             "colour": "#646464",
             "contents": [
                 { "kind": "block", "type": "header_wrapper" },
+                { "kind": "block", "type": "divvytuff" },
                 { "kind": "block", "type": "footer_wrapper" }
             ]
         },
@@ -46,9 +47,7 @@ const myToolbox = {
             "contents": [
                 { "kind": "block", "type": "style_wrapper" },
                 { "kind": "block", "type": "set_style_attribute" },
-                { "kind": "block", "type": "set_style_bg_black" },
-                { "kind": "block", "type": "set_style_color_white" },
-                { "kind": "block", "type": "set_style_font_comic" },
+                // removed like 3 because they were lowkey useless
                 { "kind": "block", "type": "custom_style" },
                 { "kind": "block", "type": "set_bg" }
             ]

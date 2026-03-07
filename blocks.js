@@ -1,7 +1,7 @@
 Blockly.common.defineBlocksWithJsonArray([
     {
         "type": "page_title",
-        "message0": "Page Title: %1",
+        "message0": "page title: %1",
         "args0": [{
             "type": "field_input",
             "name": "TEXT",
@@ -14,7 +14,7 @@ Blockly.common.defineBlocksWithJsonArray([
     },
     {
         "type": "custom_style",
-        "message0": "Custom Style: %1",
+        "message0": "custom raw style: %1",
         "args0": [{
             "type": "field_input",
             "name": "COLOUR",
@@ -29,7 +29,7 @@ Blockly.common.defineBlocksWithJsonArray([
         "type": "html_wrapper",
         "tooltip": "tuff",
         "helpUrl": "tuff.com",
-        "message0": "HTML %1 %2",
+        "message0": "html %1 %2",
         "args0": [
             {
                 "type": "input_dummy",
@@ -47,7 +47,7 @@ Blockly.common.defineBlocksWithJsonArray([
         "type": "body_wrapper",
         "tooltip": "tuff",
         "helpUrl": "tuff.com",
-        "message0": "Body %1 %2",
+        "message0": "body %1 %2",
         "args0": [
             {
                 "type": "input_dummy",
@@ -66,7 +66,7 @@ Blockly.common.defineBlocksWithJsonArray([
         "type": "head_wrapper",
         "tooltip": "tuff",
         "helpUrl": "tuff.com",
-        "message0": "Head %1 %2",
+        "message0": "head %1 %2",
         "args0": [
             {
                 "type": "input_dummy",
@@ -86,7 +86,7 @@ Blockly.common.defineBlocksWithJsonArray([
         "type": "header_wrapper",
         "tooltip": "tuff",
         "helpUrl": "tuff.com",
-        "message0": "Header %1 %2",
+        "message0": "header %1 %2",
         "args0": [
             {
                 "type": "input_dummy",
@@ -104,8 +104,39 @@ Blockly.common.defineBlocksWithJsonArray([
     },
 
     {
+        "type": "divvytuff",
+        "tooltip": "fwhoiwfioniwfiafwainppfiwpififn",
+        "helpUrl": "tuff.com",
+        "message0": "div | name: %1 class: %2 %3 %4",
+        "args0": [
+            {
+                "type": "field_input",
+                "name": "DIV_NAME",
+                "text": "myDiv"
+            },
+            {
+                "type": "field_input",
+                "name": "DIV_CLASS",
+                "text": "myClass"
+            },
+            {
+                "type": "input_dummy",
+                "name": "NAME"
+            },
+            {
+                "type": "input_statement",
+                "name": "HTML"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#00a2be",
+        "tooltip": "Lowkey just a div"
+    },
+
+    {
         "type": "p",
-        "message0": "Paragraph: %1",
+        "message0": "paragraph: %1",
         "args0": [{
             "type": "field_input",
             "name": "CONTENT",
@@ -213,7 +244,7 @@ Blockly.common.defineBlocksWithJsonArray([
         "type": "footer_wrapper",
         "tooltip": "tuff",
         "helpUrl": "tuff.com",
-        "message0": "Footer %1 %2",
+        "message0": "footer %1 %2",
         "args0": [
             {
                 "type": "input_dummy",
@@ -233,7 +264,7 @@ Blockly.common.defineBlocksWithJsonArray([
         "type": "script_wrapper",
         "tooltip": "tuff",
         "helpUrl": "tuff.com",
-        "message0": "Script %1 %2",
+        "message0": "script %1 %2",
         "args0": [
             {
                 "type": "input_dummy",
@@ -367,7 +398,7 @@ Blockly.common.defineBlocksWithJsonArray([
 
     {
         "type": "href_link",
-        "message0": "External file %1 URL: %2",
+        "message0": "external file %1 URL: %2",
         "args0": [
             {
                 "type": "field_dropdown",
@@ -393,7 +424,7 @@ Blockly.common.defineBlocksWithJsonArray([
         "type": "style_wrapper",
         "tooltip": "tuff",
         "helpUrl": "",
-        "message0": "Style %1 %2",
+        "message0": "style %1 %2",
         "args0": [
             {
                 "type": "input_dummy",
