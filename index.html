@@ -268,8 +268,6 @@
                     localStorage.setItem('pooide2_autosave', text);
                 } catch (_) { }
             });
-
-            // ── Restore autosaved workspace ────────────────────
             (function () {
                 try {
                     var saved = localStorage.getItem('pooide2_autosave');
@@ -279,13 +277,10 @@
                     }
                 } catch (_) { }
             })();
-
-            // ── Responsive resize ──────────────────────────────
             window.addEventListener('resize', function () {
                 Blockly.svgResize(workspace);
             });
 
-            // ── Settings panel ──────────────────────────────────
             function openSettings() {
                 document.getElementById('s-renderer').value = workspace.options.renderer || 'zeus';
                 var g = workspace.options.gridOptions || {};
