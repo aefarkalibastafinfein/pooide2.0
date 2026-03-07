@@ -28,34 +28,34 @@ function lightenHexColour(colour, amount) {
     }).join('');
 }
 
-function getMatchedColourState(block) {
-    if (!block) return null;
-    if (block.__matchParentColourState) {
-        return block.__matchParentColourState;
+function getNearestBranchColourState(block, baseColour) {
+    var parent = block && block.getParent();
+    while (parent) {
+        if (
+            parent.__matchParentColourState &&
+            parent.__matchParentColourState.base === baseColour
+        ) {
+            return parent.__matchParentColourState;
+        }
+        parent = parent.getParent();
     }
-    return {
-        base: normaliseHexColour(block.getColour()),
-        shade: 0
-    };
+    return null;
 }
 
 function syncMatchedBlockColour(block) {
     var defaultBase = block.__defaultMatchParentColour || normaliseHexColour(block.getColour());
-    var parent = block.getParent();
-    var state;
+    var state = {
+        base: defaultBase,
+        shade: 0
+    };
 
-    if (!parent) {
-        state = { base: defaultBase, shade: 0 };
-    } else {
-        var parentState = getMatchedColourState(parent);
-        state = {
-            base: parentState.base,
-            shade: parentState.shade === 0 ? 1 : 0
-        };
+    var sameColourBranchState = getNearestBranchColourState(block, defaultBase);
+    if (sameColourBranchState) {
+        state.shade = sameColourBranchState.shade === 0 ? 1 : 0;
     }
 
     block.__matchParentColourState = state;
-    var targetColour = state.shade === 0 ? state.base : lightenHexColour(state.base, 0.18);
+    var targetColour = state.shade === 0 ? defaultBase : lightenHexColour(defaultBase, 0.18);
     if (normaliseHexColour(block.getColour()) === targetColour) return;
     block.setColour(targetColour);
 }
@@ -196,6 +196,7 @@ Blockly.common.defineBlocksWithJsonArray([
         "previousStatement": null,
         "nextStatement": null,
         "colour": "#474747",
+        "extensions": ["match_parent_colour"]
     },
     {
         "type": "head_wrapper",
@@ -385,7 +386,6 @@ Blockly.common.defineBlocksWithJsonArray([
         "nextStatement": null,
         "previousStatement": null,
         "colour": "#474747",
-        "extensions": ["match_parent_colour"],
         "tooltip": "HTML meta tags — viewport and charset"
     },
     {
@@ -545,7 +545,7 @@ Blockly.common.defineBlocksWithJsonArray([
             {
                 "type": "input_value",
                 "name": "CODE",
-                "check": "String"
+        "check": "String"
             }
         ],
         "output": null,
