@@ -2,11 +2,6 @@ const myToolbox = {
     "kind": "categoryToolbox",
     "contents": [
         {
-            "kind": "search",
-            "name": "Search",
-            "contents": []
-        },
-        {
             "kind": "category",
             "name": "Document",
             "colour": THEME_COLOURS.document,

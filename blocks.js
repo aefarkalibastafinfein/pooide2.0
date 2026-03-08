@@ -267,7 +267,7 @@ registerStringShadowExtension('link_default_string_shadows', [
 ]);
 registerStringShadowExtension('image_default_string_shadows', [
     { inputName: 'SRC', text: 'https://example.com/image.png' },
-    { inputName: 'ALT', text: 'Example image' },
+    { inputName: 'ALT', text: 'Example media' },
     { inputName: 'WIDTH', text: '' },
     { inputName: 'HEIGHT', text: '' }
 ]);
@@ -605,8 +605,17 @@ Blockly.common.defineBlocksWithJsonArray([
     },
     {
         "type": "image_block",
-        "message0": "image src %1 alt %2 width %3 height %4",
+        "message0": "%1 src %2 text %3 width %4 height %5",
         "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "MEDIA_TYPE",
+                "options": [
+                    ["image", "image"],
+                    ["sound", "sound"],
+                    ["video", "video"]
+                ]
+            },
             {
                 "type": "input_value",
                 "name": "SRC",
@@ -631,7 +640,7 @@ Blockly.common.defineBlocksWithJsonArray([
         "previousStatement": null,
         "nextStatement": null,
         "colour": THEME_COLOURS.content,
-        "tooltip": "Add an image with optional width and height",
+        "tooltip": "Add an image, sound, or video with optional width and height",
         "extensions": ["image_default_string_shadows"]
     },
 

@@ -77,11 +77,22 @@ javascript.javascriptGenerator.forBlock['link_block'] = function (block) {
     return `<a href="${url}">${text}</a>\n`;
 };
 javascript.javascriptGenerator.forBlock['image_block'] = function (block) {
+    const mediaType = block.getFieldValue('MEDIA_TYPE') || 'image';
     const src = escapeAttributeText(getStringInputText(block, 'SRC', 'https://example.com/image.png'));
-    const alt = escapeAttributeText(getStringInputText(block, 'ALT', 'Example image'));
+    const text = getStringInputText(block, 'ALT', 'Example media');
     const width = getStringInputText(block, 'WIDTH', '').trim();
     const height = getStringInputText(block, 'HEIGHT', '').trim();
-    return `<img src="${src}" alt="${alt}"${buildOptionalAttribute('width', width)}${buildOptionalAttribute('height', height)}>\n`;
+    const escapedText = escapeHtmlText(text);
+
+    if (mediaType === 'sound') {
+        return `<audio src="${src}" controls${buildOptionalAttribute('width', width)}${buildOptionalAttribute('height', height)}>${escapedText}</audio>\n`;
+    }
+
+    if (mediaType === 'video') {
+        return `<video src="${src}" controls${buildOptionalAttribute('width', width)}${buildOptionalAttribute('height', height)}>${escapedText}</video>\n`;
+    }
+
+    return `<img src="${src}" alt="${escapeAttributeText(text)}"${buildOptionalAttribute('width', width)}${buildOptionalAttribute('height', height)}>\n`;
 };
 
 javascript.javascriptGenerator.forBlock['custom_style'] = function (block) {

@@ -11,19 +11,10 @@
         <script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
         <script src="https://unpkg.com/blockly/msg/en.js"></script>
         <script src="https://unpkg.com/@blockly/field-colour-hsv-sliders"></script>
-        <script src="https://unpkg.com/@blockly/toolbox-search"></script>
         <script src="https://unpkg.com/@blockly/continuous-toolbox"></script>
         <script src="https://unpkg.com/@blockly/field-dependent-dropdown"></script>
         <script src="https://unpkg.com/@blockly/field-multilineinput"></script>
-        <script>
-            registerFieldMultilineInput();
-            function forceInlineInputs(ws) {
-                if (!ws) return;
-                ws.getAllBlocks(false).forEach(function (block) {
-                    block.setInputsInline(true);
-                });
-            }
-        </script>
+        <script src="blockly-setup.js"></script>
 
         <script src="blocks.js"></script>
         <script src="generators.js"></script>
@@ -57,6 +48,39 @@
             #toolbar button {
                 padding: 4px 12px;
                 cursor: pointer;
+            }
+
+            #toolbar .toolbar-spacer {
+                flex: 1;
+            }
+
+            .toolbar-search {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .toolbar-search-toggle {
+                min-width: 60px;
+            }
+
+            .toolbar-search input {
+                width: 0;
+                padding: 4px 0;
+                border: 0;
+                border-radius: 3px;
+                font-size: 13px;
+                opacity: 0;
+                pointer-events: none;
+                transition: width 120ms ease, padding 120ms ease, opacity 120ms ease, border-width 120ms ease;
+            }
+
+            .toolbar-search.expanded input {
+                width: 220px;
+                padding: 4px 8px;
+                border: 1px solid #ccc;
+                opacity: 1;
+                pointer-events: auto;
             }
 
             #main {
@@ -152,6 +176,83 @@
 
             #settingsPanel button:hover {
                 background: #e8e8e8;
+            }
+
+            .workspace-find-window {
+                display: none;
+                position: fixed;
+                top: 72px;
+                right: 20px;
+                width: 280px;
+                border: 1px solid #bdbdbd;
+                background: #f0f0f0;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+                z-index: 90;
+            }
+
+            .workspace-find-window.open {
+                display: block;
+            }
+
+            .workspace-find-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 6px 8px;
+                border-bottom: 1px solid #ccc;
+                background: #e6e6e6;
+                cursor: move;
+                user-select: none;
+            }
+
+            .workspace-find-title {
+                font-size: 13px;
+                font-weight: bold;
+            }
+
+            .workspace-find-close {
+                min-width: 24px;
+                padding: 2px 6px;
+                border: 1px solid #bdbdbd;
+                background: #fff;
+                cursor: pointer;
+            }
+
+            .workspace-find-body {
+                padding: 8px;
+            }
+
+            .workspace-find-body input {
+                width: 100%;
+                padding: 5px 8px;
+                border: 1px solid #ccc;
+                border-radius: 3px;
+                font-size: 13px;
+            }
+
+            .workspace-find-actions {
+                display: flex;
+                gap: 6px;
+                justify-content: flex-end;
+                margin-top: 8px;
+            }
+
+            .workspace-find-actions button {
+                padding: 4px 10px;
+                border: 1px solid #bdbdbd;
+                background: #fff;
+                cursor: pointer;
+            }
+
+            .workspace-find-status {
+                margin-top: 8px;
+                min-height: 16px;
+                font-size: 12px;
+                color: #444;
+            }
+
+            .workspace-find-status.error {
+                color: #8b1f1f;
             }
 
             .reporter-bubble-layer {
@@ -291,6 +392,7 @@
                 background: #fff0f0;
                 color: #8b1f1f;
             }
+
         </style>
     </head>
     <!-- This isnt vibecoded. Watch my every step.-->
@@ -299,12 +401,17 @@
         <div id="toolbar">
             <span class="brand">Poo IDE 2</span>
             <div class="sep"></div>
-            <button onclick="downloadBlocksXml()" title="Save workspace as XML">Save</button>
-            <button onclick="loadBlocksXml()" title="Load workspace from XML file">Load</button>
+            <button onclick="downloadBlocksXml()" title="Save workspace as .poop">Save</button>
+            <button onclick="loadBlocksXml()" title="Load workspace from .poop or XML file">Load</button>
             <div class="sep"></div>
             <button onclick="downloadGeneratedPage()" title="Export generated HTML">Export HTML</button>
-            <button onclick="runGeneratedPage()" title="Preview in new tab">Preview</button>
+            <button onclick="runGeneratedPage()" title="Preview in sandboxed new tab">Preview</button>
             <button onclick="openSettings()" title="Workspace settings">Settings</button>
+            <div class="toolbar-spacer"></div>
+            <div class="toolbar-search" id="toolbarSearch">
+                <button id="toolbarSearchToggle" class="toolbar-search-toggle" type="button" title="Search blocks">Search</button>
+                <input id="toolbarSearchInput" type="text" placeholder="Find blocks">
+            </div>
         </div>
 
         <div id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
@@ -348,171 +455,26 @@
             </div>
         </div>
 
+        <div id="workspaceFindWindow" class="workspace-find-window">
+            <div id="workspaceFindHeader" class="workspace-find-header">
+                <span class="workspace-find-title">Find In Workspace</span>
+                <button id="workspaceFindClose" class="workspace-find-close" type="button" title="Close">x</button>
+            </div>
+            <div class="workspace-find-body">
+                <input id="workspaceFindInput" type="text" placeholder="Find block text">
+                <div class="workspace-find-actions">
+                    <button id="workspaceFindNext" type="button">Find Next</button>
+                </div>
+                <div id="workspaceFindStatus" class="workspace-find-status"></div>
+            </div>
+        </div>
+
         <div id="main">
             <div id="blocklyDiv"></div>
         </div>
 
         <script src="download.js"></script>
-        <script>
-            registerContinuousToolbox();
-
-            var workspace = Blockly.inject('blocklyDiv', {
-                renderer: 'zeus',
-                toolbox: myToolbox,
-                plugins: {
-                    toolbox: ContinuousToolbox,
-                    flyoutsVerticalToolbox: ContinuousFlyout,
-                    metricsManager: ContinuousMetrics,
-                },
-                zoom: {
-                    controls: true,
-                    wheel: true,
-                    startScale: 1.0,
-                    maxScale: 3,
-                    minScale: 0.3,
-                    scaleSpeed: 1.12,
-                    pinch: true
-                },
-                trashcan: true,
-                move: {
-                    scrollbars: {
-                        horizontal: true,
-                        vertical: true
-                    },
-                    drag: true,
-                    wheel: false
-                },
-                grid: {
-                    spacing: 25,
-                    length: 3,
-                    colour: '#333',
-                    snap: true
-                },
-                sounds: true,
-                media: 'https://unpkg.com/blockly/media/'
-            });
-
-            forceInlineInputs(workspace);
-            workspace.addChangeListener(function () {
-                forceInlineInputs(workspace);
-            });
-            setupReporterBubbles(workspace);
-
-            workspace.addChangeListener(function (e) {
-                if (e.isUiEvent) return;
-                // autosave to localStorage
-                try {
-                    var xml = Blockly.Xml.workspaceToDom(workspace);
-                    var text = Blockly.Xml.domToText(xml);
-                    localStorage.setItem('pooide2_autosave', text);
-                } catch (_) { }
-            });
-            (function () {
-                try {
-                    var saved = localStorage.getItem('pooide2_autosave');
-                    if (saved) {
-                        var xml = Blockly.utils.xml.textToDom(saved);
-                        Blockly.Xml.domToWorkspace(xml, workspace);
-                    }
-                } catch (_) { }
-            })();
-            window.addEventListener('resize', function () {
-                Blockly.svgResize(workspace);
-            });
-
-            function openSettings() {
-                document.getElementById('s-renderer').value = workspace.options.renderer || 'zeus';
-                var g = workspace.options.gridOptions || {};
-                document.getElementById('s-grid-snap').checked = !!g.snap;
-                document.getElementById('s-grid-spacing').value = g.spacing || 25;
-                document.getElementById('s-grid-colour').value = g.colour || '#333333';
-                var z = workspace.options.zoomOptions || {};
-                document.getElementById('s-zoom-wheel').checked = !!z.wheel;
-                document.getElementById('s-zoom-controls').checked = !!z.controls;
-                document.getElementById('s-zoom-min').value = z.minScale || 0.3;
-                document.getElementById('s-zoom-max').value = z.maxScale || 3;
-                document.getElementById('s-trashcan').checked = !!workspace.options.hasTrashcan;
-                document.getElementById('s-sounds').checked = !!workspace.options.hasSounds;
-                document.getElementById('settingsOverlay').classList.add('open');
-            }
-
-            function closeSettings() {
-                document.getElementById('settingsOverlay').classList.remove('open');
-            }
-
-            function applySettings() {
-                var xml = Blockly.Xml.workspaceToDom(workspace);
-                var xmlText = Blockly.Xml.domToText(xml);
-
-                var renderer = document.getElementById('s-renderer').value;
-                var gridSnap = document.getElementById('s-grid-snap').checked;
-                var gridSpacing = parseInt(document.getElementById('s-grid-spacing').value) || 25;
-                var gridColour = document.getElementById('s-grid-colour').value;
-                var zoomWheel = document.getElementById('s-zoom-wheel').checked;
-                var zoomControls = document.getElementById('s-zoom-controls').checked;
-                var zoomMin = parseFloat(document.getElementById('s-zoom-min').value) || 0.3;
-                var zoomMax = parseFloat(document.getElementById('s-zoom-max').value) || 3;
-                var trashcan = document.getElementById('s-trashcan').checked;
-                var sounds = document.getElementById('s-sounds').checked;
-
-                workspace.dispose();
-                var div = document.getElementById('blocklyDiv');
-                div.innerHTML = '';
-
-                window.workspace = Blockly.inject('blocklyDiv', {
-                    renderer: renderer,
-                    toolbox: myToolbox,
-                    plugins: {
-                        toolbox: ContinuousToolbox,
-                        flyoutsVerticalToolbox: ContinuousFlyout,
-                        metricsManager: ContinuousMetrics,
-                    },
-                    zoom: {
-                        controls: zoomControls,
-                        wheel: zoomWheel,
-                        startScale: 1.0,
-                        maxScale: zoomMax,
-                        minScale: zoomMin,
-                        scaleSpeed: 1.12,
-                        pinch: true
-                    },
-                    trashcan: trashcan,
-                    move: { scrollbars: { horizontal: true, vertical: true }, drag: true, wheel: false },
-                    grid: { spacing: gridSpacing, length: 3, colour: gridColour, snap: gridSnap },
-                    sounds: sounds,
-                    media: 'https://unpkg.com/blockly/media/'
-                });
-
-                workspace = window.workspace;
-
-                forceInlineInputs(workspace);
-                workspace.addChangeListener(function () {
-                    forceInlineInputs(workspace);
-                });
-                setupReporterBubbles(workspace);
-
-                workspace.addChangeListener(function (e) {
-                    if (e.isUiEvent) return;
-                    try {
-                        var x = Blockly.Xml.workspaceToDom(workspace);
-                        localStorage.setItem('pooide2_autosave', Blockly.Xml.domToText(x));
-                    } catch (_) { }
-                });
-
-                try {
-                    var dom = Blockly.utils.xml.textToDom(xmlText);
-                    Blockly.Xml.domToWorkspace(dom, workspace);
-                } catch (_) { }
-
-                localStorage.setItem('pooide2_settings', JSON.stringify({
-                    renderer: renderer, gridSnap: gridSnap, gridSpacing: gridSpacing,
-                    gridColour: gridColour, zoomWheel: zoomWheel, zoomControls: zoomControls,
-                    zoomMin: zoomMin, zoomMax: zoomMax, trashcan: trashcan, sounds: sounds
-                }));
-
-                closeSettings();
-            }
-        </script>
+        <script src="app.js"></script>
 
         <!-- Poopy butt dookie-->
     </body>
