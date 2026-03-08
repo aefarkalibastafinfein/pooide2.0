@@ -3,11 +3,43 @@
  */
 (function () {
     const svgPaths = Blockly.utils.svgPaths;
+    const STATEMENT_NOTCH_VARIANTS = {
+        ScriptStatement: {
+            shapeType: 11,
+            widthScale: 1.55,
+            heightScale: 1.35,
+            shoulderRatio: 0.14,
+            spikeCount: 3
+        },
+        CssStatement: {
+            shapeType: 12,
+            widthScale: 1.28,
+            heightScale: 1.2,
+            shoulderRatio: 0.16,
+            spikeCount: 2
+        },
+        CssDeclaration: {
+            shapeType: 12,
+            widthScale: 1.28,
+            heightScale: 1.2,
+            shoulderRatio: 0.16,
+            spikeCount: 2
+        },
+        ListItem: {
+            shapeType: 13,
+            widthScale: 0.82,
+            heightScale: 0.9,
+            shoulderRatio: 0.26,
+            spikeCount: 1,
+            slopeRatio: 0.12
+        }
+    };
 
 
     class ZeusConstantProvider extends Blockly.zelos.ConstantProvider {
         constructor() {
             super();
+            this.STATEMENT_NOTCHES = {};
             this.TAB = null;
             this.BTAB = null;
             this.OCTOGON = null;
@@ -34,7 +66,10 @@
                 BTAB: 7,
                 OCTOGON: 8,
                 SQUIRCLE: 9,
-                LEAF: 10
+                LEAF: 10,
+                SCRIPT_NOTCH: 11,
+                CSS_NOTCH: 12,
+                LIST_NOTCH: 13
             };
 
 
@@ -49,6 +84,70 @@
                 9: { 0: 2 * G, 1: 2 * G, 2: 2 * G, 3: 2 * G, 6: 2 * G, 7: 2 * G, 8: 2 * G, 9: 2 * G, 10: 2 * G },
                 10: { 0: 2 * G, 1: 2 * G, 2: 2 * G, 3: 2 * G, 6: 2 * G, 7: 2 * G, 8: 2 * G, 9: 2 * G, 10: 2 * G },
             };
+
+            this.STATEMENT_NOTCHES = this.makeStatementNotches_();
+        }
+
+
+        makeMatchingNotch_(config) {
+            var baseWidth = this.NOTCH && this.NOTCH.width ? this.NOTCH.width : 15;
+            var baseHeight = this.NOTCH && this.NOTCH.height ? this.NOTCH.height : 4;
+            var width = Math.max(12, Math.round(baseWidth * (config.widthScale || 1)));
+            var height = Math.max(3, Math.round(baseHeight * (config.heightScale || 1)));
+            var shoulder = Math.max(2, Math.round(width * (config.shoulderRatio || 0.22)));
+            var spikeCount = Math.max(1, config.spikeCount || 1);
+
+            function makeMainPath(direction) {
+                var points = [svgPaths.point(direction * shoulder, 0)];
+                var usableWidth = Math.max(2, width - shoulder * 2);
+
+                if (spikeCount === 1) {
+                    var slope = Math.max(2, Math.round(width * (config.slopeRatio || 0.16)));
+                    var valley = Math.max(2, usableWidth - slope * 2);
+                    points.push(svgPaths.point(direction * slope, height));
+                    points.push(svgPaths.point(direction * valley, 0));
+                    points.push(svgPaths.point(direction * slope, -height));
+                    points.push(svgPaths.point(direction * shoulder, 0));
+                    return svgPaths.line(points);
+                }
+
+                var step = Math.max(2, usableWidth / (spikeCount * 2));
+                for (var i = 0; i < spikeCount; i++) {
+                    points.push(svgPaths.point(direction * step, height));
+                    points.push(svgPaths.point(direction * step, -height));
+                }
+                points.push(svgPaths.point(direction * shoulder, 0));
+                return svgPaths.line(points);
+            }
+
+            return {
+                type: config.shapeType,
+                width: width,
+                height: height,
+                pathLeft: makeMainPath(1),
+                pathRight: makeMainPath(-1)
+            };
+        }
+
+
+        makeStatementNotches_() {
+            var notches = {};
+            Object.keys(STATEMENT_NOTCH_VARIANTS).forEach(function (key) {
+                notches[key] = this.makeMatchingNotch_(STATEMENT_NOTCH_VARIANTS[key]);
+            }, this);
+            return notches;
+        }
+
+
+        getStatementNotch_(checks) {
+            var list = Array.isArray(checks) ? checks : (checks ? [checks] : []);
+            for (var i = 0; i < list.length; i++) {
+                var check = list[i];
+                if (this.STATEMENT_NOTCHES[check]) {
+                    return this.STATEMENT_NOTCHES[check];
+                }
+            }
+            return null;
         }
 
 
@@ -285,6 +384,8 @@
                     return this.ROUNDED;
                 case Blockly.ConnectionType.PREVIOUS_STATEMENT:
                 case Blockly.ConnectionType.NEXT_STATEMENT:
+                    var statementNotch = this.getStatementNotch_(checks);
+                    if (statementNotch) return statementNotch;
                     return this.NOTCH;
                 default:
                     throw Error('Unknown connection type');

@@ -33,6 +33,9 @@ const myToolbox = {
             "contents": [
                 { "kind": "block", "type": "heading" },
                 { "kind": "block", "type": "p" },
+                { "kind": "block", "type": "span" },
+                { "kind": "block", "type": "list_wrapper" },
+                { "kind": "block", "type": "list_item" },
                 { "kind": "block", "type": "link_block" },
                 { "kind": "block", "type": "image_block" },
                 { "kind": "block", "type": "br" },

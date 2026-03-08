@@ -71,6 +71,10 @@ javascript.javascriptGenerator.forBlock['p'] = function (block) {
     const content = getStringInputText(block, 'CONTENT', 'Testing testing');
     return `<p>${content}</p>\n`;
 };
+javascript.javascriptGenerator.forBlock['span'] = function (block) {
+    const text = escapeHtmlText(getStringInputText(block, 'TEXT', 'Inline text'));
+    return `<span>${text}</span>\n`;
+};
 javascript.javascriptGenerator.forBlock['link_block'] = function (block) {
     const text = escapeHtmlText(getStringInputText(block, 'TEXT', 'Visit site'));
     const url = escapeAttributeText(getStringInputText(block, 'URL', 'https://example.com'));
@@ -93,6 +97,15 @@ javascript.javascriptGenerator.forBlock['image_block'] = function (block) {
     }
 
     return `<img src="${src}" alt="${escapeAttributeText(text)}"${buildOptionalAttribute('width', width)}${buildOptionalAttribute('height', height)}>\n`;
+};
+javascript.javascriptGenerator.forBlock['list_wrapper'] = function (block) {
+    const listType = block.getFieldValue('LIST_TYPE') || 'ul';
+    const items = javascript.javascriptGenerator.statementToCode(block, 'ITEMS');
+    return `<${listType}>\n${items}</${listType}>\n`;
+};
+javascript.javascriptGenerator.forBlock['list_item'] = function (block) {
+    const text = escapeHtmlText(getStringInputText(block, 'TEXT', 'List item'));
+    return `<li>${text}</li>\n`;
 };
 
 javascript.javascriptGenerator.forBlock['custom_style'] = function (block) {

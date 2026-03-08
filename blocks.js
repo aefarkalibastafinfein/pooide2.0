@@ -236,6 +236,9 @@ registerStringShadowExtension('button_default_string_shadow', [
 registerStringShadowExtension('paragraph_default_string_shadow', [
     { inputName: 'CONTENT', text: 'Testing testing' }
 ]);
+registerStringShadowExtension('span_default_string_shadow', [
+    { inputName: 'TEXT', text: 'Inline text' }
+]);
 registerStringShadowExtension('heading_default_string_shadow', [
     { inputName: 'TEXT', text: 'Heading text' }
 ]);
@@ -270,6 +273,9 @@ registerStringShadowExtension('image_default_string_shadows', [
     { inputName: 'ALT', text: 'Example media' },
     { inputName: 'WIDTH', text: '' },
     { inputName: 'HEIGHT', text: '' }
+]);
+registerStringShadowExtension('list_item_default_string_shadow', [
+    { inputName: 'TEXT', text: 'List item' }
 ]);
 registerStringShadowExtension('css_rule_default_string_shadow', [
     { inputName: 'SELECTOR', text: '.card' }
@@ -358,8 +364,8 @@ Blockly.common.defineBlocksWithJsonArray([
             "name": "TEXT",
             "check": "String"
         }],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.document,
         "tooltip": "Poopy poopy butt dookie",
         "extensions": ["page_title_default_string_shadow"]
@@ -374,8 +380,8 @@ Blockly.common.defineBlocksWithJsonArray([
             "maxLines": 6,
             "spellcheck": false
         }],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.style,
         "tooltip": "Poopy poopy butt dookie"
     },
@@ -391,10 +397,11 @@ Blockly.common.defineBlocksWithJsonArray([
             },
             {
                 "type": "input_statement",
-                "name": "HTML"
+                "name": "HTML",
+                "check": "HtmlStatement"
             }
         ],
-        "previousStatement": null,
+        "previousStatement": "HtmlStatement",
         "colour": THEME_COLOURS.document,
         "extensions": ["match_parent_colour"]
     },
@@ -410,11 +417,12 @@ Blockly.common.defineBlocksWithJsonArray([
             },
             {
                 "type": "input_statement",
-                "name": "HTML"
+                "name": "HTML",
+                "check": "HtmlStatement"
             }
         ],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.document,
         "extensions": ["match_parent_colour"]
     },
@@ -430,11 +438,12 @@ Blockly.common.defineBlocksWithJsonArray([
             },
             {
                 "type": "input_statement",
-                "name": "HTML"
+                "name": "HTML",
+                "check": "HtmlStatement"
             }
         ],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.document,
         "tooltip": "AAAaaaaAAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaA",
         "extensions": ["match_parent_colour"]
@@ -452,11 +461,12 @@ Blockly.common.defineBlocksWithJsonArray([
             },
             {
                 "type": "input_statement",
-                "name": "HTML"
+                "name": "HTML",
+                "check": "HtmlStatement"
             }
         ],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.document,
         "tooltip": "AAAaaaaAAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaA",
         "extensions": ["match_parent_colour"]
@@ -476,11 +486,12 @@ Blockly.common.defineBlocksWithJsonArray([
             },
             {
                 "type": "input_statement",
-                "name": "HTML"
+                "name": "HTML",
+                "check": "HtmlStatement"
             }
         ],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.layout,
         "tooltip": "Generic wrapper for semantic layout tags",
         "extensions": ["semantic_wrapper_colour"]
@@ -500,11 +511,12 @@ Blockly.common.defineBlocksWithJsonArray([
             },
             {
                 "type": "input_statement",
-                "name": "HTML"
+                "name": "HTML",
+                "check": "HtmlStatement"
             }
         ],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.layout,
         "tooltip": "Generic wrapper for common HTML elements",
         "extensions": ["element_wrapper_behaviour"]
@@ -532,11 +544,12 @@ Blockly.common.defineBlocksWithJsonArray([
             },
             {
                 "type": "input_statement",
-                "name": "HTML"
+                "name": "HTML",
+                "check": "HtmlStatement"
             }
         ],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.layout,
         "tooltip": "Lowkey just a div",
         "extensions": ["div_default_string_shadows", "match_parent_colour"]
@@ -558,11 +571,12 @@ Blockly.common.defineBlocksWithJsonArray([
             },
             {
                 "type": "input_statement",
-                "name": "ACTIONS"
+                "name": "ACTIONS",
+                "check": "ScriptStatement"
             }
         ],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.script,
         "tooltip": "Creates a button that runs the blocks inside when clicked",
         "extensions": ["button_default_string_shadow", "match_parent_colour"]
@@ -576,11 +590,25 @@ Blockly.common.defineBlocksWithJsonArray([
             "name": "CONTENT",
             "check": "String"
         }],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.content,
         "tooltip": "AAAaaaaAAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaA",
         "extensions": ["paragraph_default_string_shadow"]
+    },
+    {
+        "type": "span",
+        "message0": "span text %1",
+        "args0": [{
+            "type": "input_value",
+            "name": "TEXT",
+            "check": "String"
+        }],
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
+        "colour": THEME_COLOURS.content,
+        "tooltip": "Inline text wrapper",
+        "extensions": ["span_default_string_shadow"]
     },
     {
         "type": "link_block",
@@ -597,8 +625,8 @@ Blockly.common.defineBlocksWithJsonArray([
                 "check": "String"
             }
         ],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.content,
         "tooltip": "Create a normal page link",
         "extensions": ["link_default_string_shadows"]
@@ -637,11 +665,52 @@ Blockly.common.defineBlocksWithJsonArray([
                 "check": "String"
             }
         ],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.content,
         "tooltip": "Add an image, sound, or video with optional width and height",
         "extensions": ["image_default_string_shadows"]
+    },
+    {
+        "type": "list_wrapper",
+        "message0": "%1 list %2 %3",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "LIST_TYPE",
+                "options": [
+                    ["unordered", "ul"],
+                    ["ordered", "ol"]
+                ]
+            },
+            {
+                "type": "input_dummy",
+                "name": "NAME"
+            },
+            {
+                "type": "input_statement",
+                "name": "ITEMS",
+                "check": "ListItem"
+            }
+        ],
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
+        "colour": THEME_COLOURS.content,
+        "tooltip": "Create an ordered or unordered list"
+    },
+    {
+        "type": "list_item",
+        "message0": "list item %1",
+        "args0": [{
+            "type": "input_value",
+            "name": "TEXT",
+            "check": "String"
+        }],
+        "previousStatement": "ListItem",
+        "nextStatement": "ListItem",
+        "colour": THEME_COLOURS.content,
+        "tooltip": "Item inside a list",
+        "extensions": ["list_item_default_string_shadow"]
     },
 
     {
@@ -680,8 +749,8 @@ Blockly.common.defineBlocksWithJsonArray([
                 "check": "String"
             }
         ],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.content,
         "tooltip": "Heading with selectable level (H1–H6)",
         "helpUrl": "https://tungtungtungsahur.tuff",
@@ -690,31 +759,31 @@ Blockly.common.defineBlocksWithJsonArray([
     {
         "type": "doctype",
         "message0": "<!DOCTYPE html>",
-        "nextStatement": null,
+        "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.document,
         "tooltip": "HTML doctype — cannot have blocks above it"
     },
     {
         "type": "br",
         "message0": "line break",
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.content,
         "tooltip": "HTML line break"
     },
     {
         "type": "hr",
         "message0": "horizontal rule",
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.content,
         "tooltip": "HTML horizontal rule"
     },
     {
         "type": "meta",
         "message0": "meta & setup",
-        "nextStatement": null,
-        "previousStatement": null,
+        "nextStatement": "HtmlStatement",
+        "previousStatement": "HtmlStatement",
         "colour": THEME_COLOURS.document,
         "tooltip": "HTML meta tags — viewport and charset"
     },
@@ -730,11 +799,12 @@ Blockly.common.defineBlocksWithJsonArray([
             },
             {
                 "type": "input_statement",
-                "name": "HTML"
+                "name": "HTML",
+                "check": "HtmlStatement"
             }
         ],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.document,
         "tooltip": "AAAaaaaAAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaA",
         "extensions": ["match_parent_colour"]
@@ -751,11 +821,12 @@ Blockly.common.defineBlocksWithJsonArray([
             },
             {
                 "type": "input_statement",
-                "name": "HTML"
+                "name": "HTML",
+                "check": "ScriptStatement"
             }
         ],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.script,
         "tooltip": "AAAaaaaAAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaA",
         "extensions": ["match_parent_colour"]
@@ -770,11 +841,12 @@ Blockly.common.defineBlocksWithJsonArray([
             },
             {
                 "type": "input_statement",
-                "name": "ACTIONS"
+                "name": "ACTIONS",
+                "check": "ScriptStatement"
             }
         ],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "ScriptStatement",
+        "nextStatement": "ScriptStatement",
         "colour": THEME_COLOURS.script,
         "tooltip": "Run the blocks inside when the page finishes loading",
         "extensions": ["match_parent_colour"]
@@ -788,8 +860,8 @@ Blockly.common.defineBlocksWithJsonArray([
                 "name": "VALUE"
             }
         ],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "ScriptStatement",
+        "nextStatement": "ScriptStatement",
         "colour": THEME_COLOURS.script,
         "tooltip": "Show an alert popup",
         "extensions": ["alert_default_string_shadow"]
@@ -803,8 +875,8 @@ Blockly.common.defineBlocksWithJsonArray([
                 "name": "VALUE"
             }
         ],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "ScriptStatement",
+        "nextStatement": "ScriptStatement",
         "colour": THEME_COLOURS.script,
         "tooltip": "Write a message to the browser console",
         "extensions": ["log_default_string_shadow"]
@@ -819,8 +891,8 @@ Blockly.common.defineBlocksWithJsonArray([
                 "check": "String"
             }
         ],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "ScriptStatement",
+        "nextStatement": "ScriptStatement",
         "colour": THEME_COLOURS.script,
         "tooltip": "Send the page to another URL",
         "extensions": ["redirect_default_string_shadow"]
@@ -913,7 +985,8 @@ Blockly.common.defineBlocksWithJsonArray([
             },
             {
                 "type": "input_statement",
-                "name": "DECLARATIONS"
+                "name": "DECLARATIONS",
+                "check": "CssDeclaration"
             }
         ],
         "output": "CssRule",
@@ -931,8 +1004,8 @@ Blockly.common.defineBlocksWithJsonArray([
                 "check": "CssRule"
             }
         ],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "CssStatement",
+        "nextStatement": "CssStatement",
         "colour": THEME_COLOURS.style,
         "tooltip": "Add a CSS rule inside a style wrapper"
     },
@@ -950,8 +1023,8 @@ Blockly.common.defineBlocksWithJsonArray([
                 "name": "VALUE"
             }
         ],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "CssDeclaration",
+        "nextStatement": "CssDeclaration",
         "colour": THEME_COLOURS.style,
         "tooltip": "A CSS declaration for use inside a CSS rule",
         "extensions": ["css_property_default_string_shadow"]
@@ -978,8 +1051,8 @@ Blockly.common.defineBlocksWithJsonArray([
                 "check": "String"
             }
         ],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "CssStatement",
+        "nextStatement": "CssStatement",
         "colour": THEME_COLOURS.styleAccent,
         "tooltip": "You HAVE to put this in a style wrapper or it wont work 🤤"
         , "extensions": ["set_style_attribute_default_string_shadows"]
@@ -1003,8 +1076,8 @@ Blockly.common.defineBlocksWithJsonArray([
                 "check": "String"
             }
         ],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.external,
         "tooltip": "Include an external CSS or JS file via href/src"
         , "extensions": ["href_link_default_string_shadow"]
@@ -1022,11 +1095,12 @@ Blockly.common.defineBlocksWithJsonArray([
             },
             {
                 "type": "input_statement",
-                "name": "HTML"
+                "name": "HTML",
+                "check": "CssStatement"
             }
         ],
-        "previousStatement": null,
-        "nextStatement": null,
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.style,
         "tooltip": "Wrap CSS rules in a <style> block",
         "extensions": ["match_parent_colour"]
