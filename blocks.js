@@ -1,3 +1,14 @@
+var THEME_COLOURS = {
+    document: "#5c6370",
+    layout: "#4f6b8a",
+    content: "#4ec9b0",
+    style: "#569cd6",
+    styleAccent: "#c586c0",
+    script: "#d19a66",
+    external: "#98c379",
+    picker: "#ce9178"
+};
+
 function setDefaultShadow(block, inputName, shadowXml) {
     var input = block.getInput(inputName);
     if (!input) return;
@@ -5,14 +16,14 @@ function setDefaultShadow(block, inputName, shadowXml) {
 }
 
 function normaliseHexColour(colour) {
-    if (!colour || typeof colour !== 'string') return '#f08b06';
+    if (!colour || typeof colour !== 'string') return THEME_COLOURS.script;
     if (/^#[0-9a-fA-F]{6}$/.test(colour)) return colour.toLowerCase();
     if (/^#[0-9a-fA-F]{3}$/.test(colour)) {
         return '#' + colour.slice(1).split('').map(function (part) {
             return part + part;
         }).join('').toLowerCase();
     }
-    return '#f08b06';
+    return THEME_COLOURS.script;
 }
 
 function lightenHexColour(colour, amount) {
@@ -28,8 +39,139 @@ function lightenHexColour(colour, amount) {
     }).join('');
 }
 
+var CSS_ATTRIBUTE_OPTIONS = [
+    ["background", "background"],
+    ["background-color", "background-color"],
+    ["background-image", "background-image"],
+    ["background-position", "background-position"],
+    ["background-repeat", "background-repeat"],
+    ["background-size", "background-size"],
+    ["color", "color"],
+    ["opacity", "opacity"],
+    ["font-family", "font-family"],
+    ["font-size", "font-size"],
+    ["font-weight", "font-weight"],
+    ["font-style", "font-style"],
+    ["line-height", "line-height"],
+    ["letter-spacing", "letter-spacing"],
+    ["margin", "margin"],
+    ["margin-top", "margin-top"],
+    ["margin-right", "margin-right"],
+    ["margin-bottom", "margin-bottom"],
+    ["margin-left", "margin-left"],
+    ["padding", "padding"],
+    ["padding-top", "padding-top"],
+    ["padding-right", "padding-right"],
+    ["padding-bottom", "padding-bottom"],
+    ["padding-left", "padding-left"],
+    ["text-align", "text-align"],
+    ["text-decoration", "text-decoration"],
+    ["text-transform", "text-transform"],
+    ["text-shadow", "text-shadow"],
+    ["white-space", "white-space"],
+    ["word-break", "word-break"],
+    ["display", "display"],
+    ["position", "position"],
+    ["top", "top"],
+    ["right", "right"],
+    ["bottom", "bottom"],
+    ["left", "left"],
+    ["z-index", "z-index"],
+    ["width", "width"],
+    ["min-width", "min-width"],
+    ["max-width", "max-width"],
+    ["height", "height"],
+    ["min-height", "min-height"],
+    ["max-height", "max-height"],
+    ["aspect-ratio", "aspect-ratio"],
+    ["border", "border"],
+    ["border-width", "border-width"],
+    ["border-style", "border-style"],
+    ["border-color", "border-color"],
+    ["border-radius", "border-radius"],
+    ["outline", "outline"],
+    ["box-shadow", "box-shadow"],
+    ["overflow", "overflow"],
+    ["overflow-x", "overflow-x"],
+    ["overflow-y", "overflow-y"],
+    ["cursor", "cursor"],
+    ["visibility", "visibility"],
+    ["box-sizing", "box-sizing"],
+    ["flex-direction", "flex-direction"],
+    ["flex-wrap", "flex-wrap"],
+    ["justify-content", "justify-content"],
+    ["align-items", "align-items"],
+    ["align-content", "align-content"],
+    ["gap", "gap"],
+    ["row-gap", "row-gap"],
+    ["column-gap", "column-gap"],
+    ["grid-template-columns", "grid-template-columns"],
+    ["grid-template-rows", "grid-template-rows"],
+    ["grid-column", "grid-column"],
+    ["grid-row", "grid-row"],
+    ["object-fit", "object-fit"],
+    ["object-position", "object-position"],
+    ["transition", "transition"],
+    ["transform", "transform"],
+    ["animation", "animation"]
+];
+
+var SEMANTIC_WRAPPER_OPTIONS = [
+    ["section", "section"],
+    ["main", "main"],
+    ["nav", "nav"],
+    ["article", "article"],
+    ["aside", "aside"]
+];
+
+var ELEMENT_WRAPPER_OPTIONS = [
+    ["div", "div"],
+    ["section", "section"],
+    ["main", "main"],
+    ["nav", "nav"],
+    ["article", "article"],
+    ["aside", "aside"],
+    ["header", "header"],
+    ["footer", "footer"]
+];
+
+var SEMANTIC_WRAPPER_COLOURS = {
+    section: THEME_COLOURS.layout,
+    main: THEME_COLOURS.content,
+    nav: THEME_COLOURS.document,
+    article: THEME_COLOURS.layout,
+    aside: THEME_COLOURS.document
+};
+
+var ELEMENT_WRAPPER_COLOURS = {
+    div: THEME_COLOURS.layout,
+    section: THEME_COLOURS.layout,
+    main: THEME_COLOURS.content,
+    nav: THEME_COLOURS.document,
+    article: THEME_COLOURS.layout,
+    aside: THEME_COLOURS.document,
+    header: THEME_COLOURS.document,
+    footer: THEME_COLOURS.document
+};
+
+function getSemanticWrapperBaseColour(tag) {
+    return SEMANTIC_WRAPPER_COLOURS[tag] || THEME_COLOURS.layout;
+}
+
+function getElementWrapperBaseColour(tag) {
+    return ELEMENT_WRAPPER_COLOURS[tag] || THEME_COLOURS.layout;
+}
+
+function getContainingParent(block) {
+    if (!block) return null;
+    if (typeof block.getSurroundParent === 'function') {
+        return block.getSurroundParent();
+    }
+    return null;
+}
+
 function getNearestBranchColourState(block, baseColour) {
-    var parent = block && block.getParent();
+    var parent = getContainingParent(block);
     while (parent) {
         if (
             parent.__matchParentColourState &&
@@ -37,7 +179,7 @@ function getNearestBranchColourState(block, baseColour) {
         ) {
             return parent.__matchParentColourState;
         }
-        parent = parent.getParent();
+        parent = getContainingParent(parent);
     }
     return null;
 }
@@ -119,6 +261,22 @@ registerStringShadowExtension('set_style_attribute_default_string_shadows', [
 registerStringShadowExtension('href_link_default_string_shadow', [
     { inputName: 'URL', text: 'http://afkdev.me/index.css' }
 ]);
+registerStringShadowExtension('link_default_string_shadows', [
+    { inputName: 'TEXT', text: 'Visit site' },
+    { inputName: 'URL', text: 'https://example.com' }
+]);
+registerStringShadowExtension('image_default_string_shadows', [
+    { inputName: 'SRC', text: 'https://example.com/image.png' },
+    { inputName: 'ALT', text: 'Example image' },
+    { inputName: 'WIDTH', text: '' },
+    { inputName: 'HEIGHT', text: '' }
+]);
+registerStringShadowExtension('css_rule_default_string_shadow', [
+    { inputName: 'SELECTOR', text: '.card' }
+]);
+registerStringShadowExtension('css_property_default_string_shadow', [
+    { inputName: 'VALUE', text: 'black' }
+]);
 
 Blockly.Extensions.register('match_parent_colour', function () {
     var block = this;
@@ -126,6 +284,68 @@ Blockly.Extensions.register('match_parent_colour', function () {
     syncMatchedBlockColour(block);
     block.setOnChange(function () {
         syncMatchedBlockColour(block);
+    });
+});
+
+Blockly.Extensions.register('leaf_output_shape', function () {
+    if (typeof this.setOutputShape !== 'function') return;
+    this.setOutputShape(10);
+});
+
+Blockly.Extensions.register('semantic_wrapper_colour', function () {
+    var block = this;
+    function syncSemanticWrapperColour() {
+        block.__defaultMatchParentColour = normaliseHexColour(
+            getSemanticWrapperBaseColour(block.getFieldValue('TAG'))
+        );
+        syncMatchedBlockColour(block);
+    }
+
+    syncSemanticWrapperColour();
+    block.setOnChange(function () {
+        syncSemanticWrapperColour();
+    });
+});
+
+Blockly.Extensions.register('element_wrapper_behaviour', function () {
+    var block = this;
+    function addElementWrapperInput(inputName, labelText) {
+        if (block.getInput(inputName)) return;
+        block.appendValueInput(inputName)
+            .setCheck('String')
+            .appendField(labelText);
+        block.moveInputBefore(inputName, 'NAME');
+        setDefaultShadow(
+            block,
+            inputName,
+            '<shadow type="string_value"><field name="TEXT"></field></shadow>'
+        );
+    }
+
+    function removeElementWrapperInput(inputName) {
+        if (!block.getInput(inputName)) return;
+        block.removeInput(inputName, true);
+    }
+
+    function syncElementWrapperBlock() {
+        var isDiv = block.getFieldValue('TAG') === 'div';
+        if (isDiv) {
+            addElementWrapperInput('ELEMENT_ID', 'id:');
+            addElementWrapperInput('ELEMENT_CLASS', 'class:');
+        } else {
+            removeElementWrapperInput('ELEMENT_ID');
+            removeElementWrapperInput('ELEMENT_CLASS');
+        }
+
+        block.__defaultMatchParentColour = normaliseHexColour(
+            getElementWrapperBaseColour(block.getFieldValue('TAG'))
+        );
+        syncMatchedBlockColour(block);
+    }
+
+    syncElementWrapperBlock();
+    block.setOnChange(function () {
+        syncElementWrapperBlock();
     });
 });
 
@@ -140,7 +360,7 @@ Blockly.common.defineBlocksWithJsonArray([
         }],
         "previousStatement": null,
         "nextStatement": null,
-        "colour": "#474747",
+        "colour": THEME_COLOURS.document,
         "tooltip": "Poopy poopy butt dookie",
         "extensions": ["page_title_default_string_shadow"]
     },
@@ -156,7 +376,7 @@ Blockly.common.defineBlocksWithJsonArray([
         }],
         "previousStatement": null,
         "nextStatement": null,
-        "colour": "#00c3ff",
+        "colour": THEME_COLOURS.style,
         "tooltip": "Poopy poopy butt dookie"
     },
     {
@@ -175,7 +395,7 @@ Blockly.common.defineBlocksWithJsonArray([
             }
         ],
         "previousStatement": null,
-        "colour": "#474747",
+        "colour": THEME_COLOURS.document,
         "extensions": ["match_parent_colour"]
     },
     {
@@ -195,7 +415,7 @@ Blockly.common.defineBlocksWithJsonArray([
         ],
         "previousStatement": null,
         "nextStatement": null,
-        "colour": "#474747",
+        "colour": THEME_COLOURS.document,
         "extensions": ["match_parent_colour"]
     },
     {
@@ -215,10 +435,11 @@ Blockly.common.defineBlocksWithJsonArray([
         ],
         "previousStatement": null,
         "nextStatement": null,
-        "colour": "#474747",
+        "colour": THEME_COLOURS.document,
         "tooltip": "AAAaaaaAAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaA",
         "extensions": ["match_parent_colour"]
     },
+    // header and footer blocks kept for compatibility but removed from the toolbox because i made element_wrapper
     {
         "type": "header_wrapper",
         "tooltip": "tuff",
@@ -236,9 +457,57 @@ Blockly.common.defineBlocksWithJsonArray([
         ],
         "previousStatement": null,
         "nextStatement": null,
-        "colour": "#474747",
+        "colour": THEME_COLOURS.document,
         "tooltip": "AAAaaaaAAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaA",
         "extensions": ["match_parent_colour"]
+    },
+    {
+        "type": "semantic_wrapper",
+        "message0": "%1 %2 %3",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "TAG",
+                "options": SEMANTIC_WRAPPER_OPTIONS
+            },
+            {
+                "type": "input_dummy",
+                "name": "NAME"
+            },
+            {
+                "type": "input_statement",
+                "name": "HTML"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": THEME_COLOURS.layout,
+        "tooltip": "Generic wrapper for semantic layout tags",
+        "extensions": ["semantic_wrapper_colour"]
+    },
+    {
+        "type": "element_wrapper",
+        "message0": "%1 %2 %3",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "TAG",
+                "options": ELEMENT_WRAPPER_OPTIONS
+            },
+            {
+                "type": "input_dummy",
+                "name": "NAME"
+            },
+            {
+                "type": "input_statement",
+                "name": "HTML"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": THEME_COLOURS.layout,
+        "tooltip": "Generic wrapper for common HTML elements",
+        "extensions": ["element_wrapper_behaviour"]
     },
 
     {
@@ -268,7 +537,7 @@ Blockly.common.defineBlocksWithJsonArray([
         ],
         "previousStatement": null,
         "nextStatement": null,
-        "colour": "#00a2be",
+        "colour": THEME_COLOURS.layout,
         "tooltip": "Lowkey just a div",
         "extensions": ["div_default_string_shadows", "match_parent_colour"]
     },
@@ -294,7 +563,7 @@ Blockly.common.defineBlocksWithJsonArray([
         ],
         "previousStatement": null,
         "nextStatement": null,
-        "colour": "#F08B06",
+        "colour": THEME_COLOURS.script,
         "tooltip": "Creates a button that runs the blocks inside when clicked",
         "extensions": ["button_default_string_shadow", "match_parent_colour"]
     },
@@ -309,9 +578,61 @@ Blockly.common.defineBlocksWithJsonArray([
         }],
         "previousStatement": null,
         "nextStatement": null,
-        "colour": "#00a2be",
+        "colour": THEME_COLOURS.content,
         "tooltip": "AAAaaaaAAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaA",
         "extensions": ["paragraph_default_string_shadow"]
+    },
+    {
+        "type": "link_block",
+        "message0": "link text %1 url %2",
+        "args0": [
+            {
+                "type": "input_value",
+                "name": "TEXT",
+                "check": "String"
+            },
+            {
+                "type": "input_value",
+                "name": "URL",
+                "check": "String"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": THEME_COLOURS.content,
+        "tooltip": "Create a normal page link",
+        "extensions": ["link_default_string_shadows"]
+    },
+    {
+        "type": "image_block",
+        "message0": "image src %1 alt %2 width %3 height %4",
+        "args0": [
+            {
+                "type": "input_value",
+                "name": "SRC",
+                "check": "String"
+            },
+            {
+                "type": "input_value",
+                "name": "ALT",
+                "check": "String"
+            },
+            {
+                "type": "input_value",
+                "name": "WIDTH",
+                "check": "String"
+            },
+            {
+                "type": "input_value",
+                "name": "HEIGHT",
+                "check": "String"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": THEME_COLOURS.content,
+        "tooltip": "Add an image with optional width and height",
+        "extensions": ["image_default_string_shadows"]
     },
 
     {
@@ -321,7 +642,7 @@ Blockly.common.defineBlocksWithJsonArray([
             {
                 type: 'field_colour_hsv_sliders',
                 name: 'COLOUR',
-                colour: '#ff9100',
+                colour: THEME_COLOURS.picker,
             },
         ],
         output: 'Colour',
@@ -352,7 +673,7 @@ Blockly.common.defineBlocksWithJsonArray([
         ],
         "previousStatement": null,
         "nextStatement": null,
-        "colour": "#00A2BE",
+        "colour": THEME_COLOURS.content,
         "tooltip": "Heading with selectable level (H1–H6)",
         "helpUrl": "https://tungtungtungsahur.tuff",
         "extensions": ["heading_default_string_shadow"]
@@ -361,7 +682,7 @@ Blockly.common.defineBlocksWithJsonArray([
         "type": "doctype",
         "message0": "<!DOCTYPE html>",
         "nextStatement": null,
-        "colour": "#474747",
+        "colour": THEME_COLOURS.document,
         "tooltip": "HTML doctype — cannot have blocks above it"
     },
     {
@@ -369,7 +690,7 @@ Blockly.common.defineBlocksWithJsonArray([
         "message0": "line break",
         "previousStatement": null,
         "nextStatement": null,
-        "colour": "#00a2be",
+        "colour": THEME_COLOURS.content,
         "tooltip": "HTML line break"
     },
     {
@@ -377,7 +698,7 @@ Blockly.common.defineBlocksWithJsonArray([
         "message0": "horizontal rule",
         "previousStatement": null,
         "nextStatement": null,
-        "colour": "#00a2be",
+        "colour": THEME_COLOURS.content,
         "tooltip": "HTML horizontal rule"
     },
     {
@@ -385,7 +706,7 @@ Blockly.common.defineBlocksWithJsonArray([
         "message0": "meta & setup",
         "nextStatement": null,
         "previousStatement": null,
-        "colour": "#474747",
+        "colour": THEME_COLOURS.document,
         "tooltip": "HTML meta tags — viewport and charset"
     },
     {
@@ -405,7 +726,7 @@ Blockly.common.defineBlocksWithJsonArray([
         ],
         "previousStatement": null,
         "nextStatement": null,
-        "colour": "#474747",
+        "colour": THEME_COLOURS.document,
         "tooltip": "AAAaaaaAAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaA",
         "extensions": ["match_parent_colour"]
     },
@@ -426,8 +747,27 @@ Blockly.common.defineBlocksWithJsonArray([
         ],
         "previousStatement": null,
         "nextStatement": null,
-        "colour": "#f08b06",
+        "colour": THEME_COLOURS.script,
         "tooltip": "AAAaaaaAAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaAAaaAaA",
+        "extensions": ["match_parent_colour"]
+    },
+    {
+        "type": "on_page_load",
+        "message0": "on page load %1 %2",
+        "args0": [
+            {
+                "type": "input_dummy",
+                "name": "NAME"
+            },
+            {
+                "type": "input_statement",
+                "name": "ACTIONS"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": THEME_COLOURS.script,
+        "tooltip": "Run the blocks inside when the page finishes loading",
         "extensions": ["match_parent_colour"]
     },
     {
@@ -441,7 +781,7 @@ Blockly.common.defineBlocksWithJsonArray([
         ],
         "previousStatement": null,
         "nextStatement": null,
-        "colour": "#f08b06",
+        "colour": THEME_COLOURS.script,
         "tooltip": "Show an alert popup",
         "extensions": ["alert_default_string_shadow"]
     },
@@ -456,7 +796,7 @@ Blockly.common.defineBlocksWithJsonArray([
         ],
         "previousStatement": null,
         "nextStatement": null,
-        "colour": "#f08b06",
+        "colour": THEME_COLOURS.script,
         "tooltip": "Write a message to the browser console",
         "extensions": ["log_default_string_shadow"]
     },
@@ -472,7 +812,7 @@ Blockly.common.defineBlocksWithJsonArray([
         ],
         "previousStatement": null,
         "nextStatement": null,
-        "colour": "#f08b06",
+        "colour": THEME_COLOURS.script,
         "tooltip": "Send the page to another URL",
         "extensions": ["redirect_default_string_shadow"]
     },
@@ -487,7 +827,7 @@ Blockly.common.defineBlocksWithJsonArray([
             }
         ],
         "output": "String",
-        "colour": "#f08b06",
+        "colour": THEME_COLOURS.script,
         "tooltip": "A string JavaScript value",
         "extensions": ["match_parent_colour"]
     },
@@ -501,7 +841,7 @@ Blockly.common.defineBlocksWithJsonArray([
             }
         ],
         "output": "String",
-        "colour": "#f08b06",
+        "colour": THEME_COLOURS.script,
         "tooltip": "Convert any value to a string",
         "extensions": ["to_string_default_string_shadow", "match_parent_colour"]
     },
@@ -516,7 +856,7 @@ Blockly.common.defineBlocksWithJsonArray([
             }
         ],
         "output": "Number",
-        "colour": "#f08b06",
+        "colour": THEME_COLOURS.script,
         "tooltip": "A numeric JavaScript value",
         "extensions": ["match_parent_colour"]
     },
@@ -534,7 +874,7 @@ Blockly.common.defineBlocksWithJsonArray([
             }
         ],
         "output": "Boolean",
-        "colour": "#f08b06",
+        "colour": THEME_COLOURS.script,
         "tooltip": "A boolean JavaScript value",
         "extensions": ["match_parent_colour"]
     },
@@ -545,13 +885,67 @@ Blockly.common.defineBlocksWithJsonArray([
             {
                 "type": "input_value",
                 "name": "CODE",
-        "check": "String"
+                "check": "String"
             }
         ],
         "output": null,
-        "colour": "#f08b06",
+        "colour": THEME_COLOURS.script,
         "tooltip": "Raw JavaScript expression",
         "extensions": ["raw_expression_default_string_shadow", "match_parent_colour"]
+    },
+    {
+        "type": "css_rule",
+        "message0": "CSS rule %1 %2",
+        "args0": [
+            {
+                "type": "input_value",
+                "name": "SELECTOR",
+                "check": "String"
+            },
+            {
+                "type": "input_statement",
+                "name": "DECLARATIONS"
+            }
+        ],
+        "output": "CssRule",
+        "colour": THEME_COLOURS.style,
+        "tooltip": "Wrap CSS declarations in a selector block",
+        "extensions": ["css_rule_default_string_shadow", "match_parent_colour", "leaf_output_shape"]
+    },
+    {
+        "type": "add_css_rules",
+        "message0": "add CSS rules %1",
+        "args0": [
+            {
+                "type": "input_value",
+                "name": "RULE",
+                "check": "CssRule"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": THEME_COLOURS.style,
+        "tooltip": "Add a CSS rule inside a style wrapper"
+    },
+    {
+        "type": "css_property",
+        "message0": "append css property %1 value %2",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "ATTRIBUTE",
+                "options": CSS_ATTRIBUTE_OPTIONS
+            },
+            {
+                "type": "input_value",
+                "name": "VALUE"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": THEME_COLOURS.style,
+        "tooltip": "A CSS declaration for use inside a CSS rule",
+        "extensions": ["css_property_default_string_shadow"]
     },
 
 
@@ -562,82 +956,7 @@ Blockly.common.defineBlocksWithJsonArray([
             {
                 "type": "field_dropdown",
                 "name": "ATTRIBUTE",
-                "options": [
-                    ["background", "background"],
-                    ["background-color", "background-color"],
-                    ["background-image", "background-image"],
-                    ["background-position", "background-position"],
-                    ["background-repeat", "background-repeat"],
-                    ["background-size", "background-size"],
-                    ["color", "color"],
-                    ["opacity", "opacity"],
-                    ["font-family", "font-family"],
-                    ["font-size", "font-size"],
-                    ["font-weight", "font-weight"],
-                    ["font-style", "font-style"],
-                    ["line-height", "line-height"],
-                    ["letter-spacing", "letter-spacing"],
-                    ["margin", "margin"],
-                    ["margin-top", "margin-top"],
-                    ["margin-right", "margin-right"],
-                    ["margin-bottom", "margin-bottom"],
-                    ["margin-left", "margin-left"],
-                    ["padding", "padding"],
-                    ["padding-top", "padding-top"],
-                    ["padding-right", "padding-right"],
-                    ["padding-bottom", "padding-bottom"],
-                    ["padding-left", "padding-left"],
-                    ["text-align", "text-align"],
-                    ["text-decoration", "text-decoration"],
-                    ["text-transform", "text-transform"],
-                    ["text-shadow", "text-shadow"],
-                    ["white-space", "white-space"],
-                    ["word-break", "word-break"],
-                    ["display", "display"],
-                    ["position", "position"],
-                    ["top", "top"],
-                    ["right", "right"],
-                    ["bottom", "bottom"],
-                    ["left", "left"],
-                    ["z-index", "z-index"],
-                    ["width", "width"],
-                    ["min-width", "min-width"],
-                    ["max-width", "max-width"],
-                    ["height", "height"],
-                    ["min-height", "min-height"],
-                    ["max-height", "max-height"],
-                    ["aspect-ratio", "aspect-ratio"],
-                    ["border", "border"],
-                    ["border-width", "border-width"],
-                    ["border-style", "border-style"],
-                    ["border-color", "border-color"],
-                    ["border-radius", "border-radius"],
-                    ["outline", "outline"],
-                    ["box-shadow", "box-shadow"],
-                    ["overflow", "overflow"],
-                    ["overflow-x", "overflow-x"],
-                    ["overflow-y", "overflow-y"],
-                    ["cursor", "cursor"],
-                    ["visibility", "visibility"],
-                    ["box-sizing", "box-sizing"],
-                    ["flex-direction", "flex-direction"],
-                    ["flex-wrap", "flex-wrap"],
-                    ["justify-content", "justify-content"],
-                    ["align-items", "align-items"],
-                    ["align-content", "align-content"],
-                    ["gap", "gap"],
-                    ["row-gap", "row-gap"],
-                    ["column-gap", "column-gap"],
-                    ["grid-template-columns", "grid-template-columns"],
-                    ["grid-template-rows", "grid-template-rows"],
-                    ["grid-column", "grid-column"],
-                    ["grid-row", "grid-row"],
-                    ["object-fit", "object-fit"],
-                    ["object-position", "object-position"],
-                    ["transition", "transition"],
-                    ["transform", "transform"],
-                    ["animation", "animation"]
-                ]
+                "options": CSS_ATTRIBUTE_OPTIONS
             },
             {
                 "type": "input_value",
@@ -652,7 +971,7 @@ Blockly.common.defineBlocksWithJsonArray([
         ],
         "previousStatement": null,
         "nextStatement": null,
-        "colour": "#a36cff",
+        "colour": THEME_COLOURS.styleAccent,
         "tooltip": "You HAVE to put this in a style wrapper or it wont work 🤤"
         , "extensions": ["set_style_attribute_default_string_shadows"]
     },
@@ -677,7 +996,7 @@ Blockly.common.defineBlocksWithJsonArray([
         ],
         "previousStatement": null,
         "nextStatement": null,
-        "colour": "#ffa500",
+        "colour": THEME_COLOURS.external,
         "tooltip": "Include an external CSS or JS file via href/src"
         , "extensions": ["href_link_default_string_shadow"]
     },
@@ -699,7 +1018,7 @@ Blockly.common.defineBlocksWithJsonArray([
         ],
         "previousStatement": null,
         "nextStatement": null,
-        "colour": "#00c3ff",
+        "colour": THEME_COLOURS.style,
         "tooltip": "Wrap CSS rules in a <style> block",
         "extensions": ["match_parent_colour"]
     },

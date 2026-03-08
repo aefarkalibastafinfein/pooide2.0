@@ -9,7 +9,7 @@ const myToolbox = {
         {
             "kind": "category",
             "name": "Document",
-            "colour": "#474747",
+            "colour": THEME_COLOURS.document,
             "contents": [
                 { "kind": "block", "type": "doctype" },
                 { "kind": "block", "type": "html_wrapper" },
@@ -22,21 +22,24 @@ const myToolbox = {
         {
             "kind": "category",
             "name": "Layout",
-            "colour": "#474747",
+            "colour": THEME_COLOURS.layout,
             "contents": [
-                { "kind": "block", "type": "header_wrapper" },
-                { "kind": "block", "type": "divvytuff" },
-                { "kind": "block", "type": "footer_wrapper" },
+                // same thing with the header
+                { "kind": "block", "type": "element_wrapper" },
+                // old div was here, but keeping it in blocks and generators for compatabillity because I Said So HaHa
+                // and the footer was here too
 
             ]
         },
         {
             "kind": "category",
             "name": "Content",
-            "colour": "#00A2BE",
+            "colour": THEME_COLOURS.content,
             "contents": [
                 { "kind": "block", "type": "heading" },
                 { "kind": "block", "type": "p" },
+                { "kind": "block", "type": "link_block" },
+                { "kind": "block", "type": "image_block" },
                 { "kind": "block", "type": "br" },
                 { "kind": "block", "type": "hr" }
             ]
@@ -44,9 +47,12 @@ const myToolbox = {
         {
             "kind": "category",
             "name": "Style",
-            "colour": "#00c3ff",
+            "colour": THEME_COLOURS.style,
             "contents": [
                 { "kind": "block", "type": "style_wrapper" },
+                { "kind": "block", "type": "add_css_rules" },
+                { "kind": "block", "type": "css_rule" },
+                { "kind": "block", "type": "css_property" },
                 { "kind": "block", "type": "set_style_attribute" },
                 // removed like 3 because they were lowkey useless
                 { "kind": "block", "type": "custom_style" },
@@ -56,9 +62,10 @@ const myToolbox = {
         {
             "kind": "category",
             "name": "Script",
-            "colour": "#f08b06",
+            "colour": THEME_COLOURS.script,
             "contents": [
                 { "kind": "block", "type": "script_wrapper" },
+                { "kind": "block", "type": "on_page_load" },
                 { "kind": "block", "type": "button_wrapper" },
                 { "kind": "block", "type": "alert_block" },
                 { "kind": "block", "type": "log_block" },
@@ -73,7 +80,7 @@ const myToolbox = {
         {
             "kind": "category",
             "name": "External",
-            "colour": "#ffa500",
+            "colour": THEME_COLOURS.external,
             "contents": [
                 { "kind": "block", "type": "href_link" }
             ]

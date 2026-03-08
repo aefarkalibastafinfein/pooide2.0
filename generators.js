@@ -16,6 +16,21 @@ function getStringInputText(block, inputName, fallbackText) {
     }
 }
 
+function escapeHtmlText(text) {
+    return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+function escapeAttributeText(text) {
+    return escapeHtmlText(text).replace(/"/g, '&quot;');
+}
+
+function buildOptionalAttribute(name, value) {
+    return value ? ` ${name}="${escapeAttributeText(value)}"` : '';
+}
+
 javascript.javascriptGenerator.forBlock['divvytuff'] = function (block) {
     const divName = getStringInputText(block, 'DIV_NAME', 'myDiv');
     const divClass = getStringInputText(block, 'DIV_CLASS', 'myClass');
@@ -56,6 +71,18 @@ javascript.javascriptGenerator.forBlock['p'] = function (block) {
     const content = getStringInputText(block, 'CONTENT', 'Testing testing');
     return `<p>${content}</p>\n`;
 };
+javascript.javascriptGenerator.forBlock['link_block'] = function (block) {
+    const text = escapeHtmlText(getStringInputText(block, 'TEXT', 'Visit site'));
+    const url = escapeAttributeText(getStringInputText(block, 'URL', 'https://example.com'));
+    return `<a href="${url}">${text}</a>\n`;
+};
+javascript.javascriptGenerator.forBlock['image_block'] = function (block) {
+    const src = escapeAttributeText(getStringInputText(block, 'SRC', 'https://example.com/image.png'));
+    const alt = escapeAttributeText(getStringInputText(block, 'ALT', 'Example image'));
+    const width = getStringInputText(block, 'WIDTH', '').trim();
+    const height = getStringInputText(block, 'HEIGHT', '').trim();
+    return `<img src="${src}" alt="${alt}"${buildOptionalAttribute('width', width)}${buildOptionalAttribute('height', height)}>\n`;
+};
 
 javascript.javascriptGenerator.forBlock['custom_style'] = function (block) {
     const styleText = block.getFieldValue('COLOUR') || '';
@@ -90,6 +117,30 @@ javascript.javascriptGenerator.forBlock['header_wrapper'] = function (block) {
     const code = `<header>${statement_html}</header>\n`;
     return code;
 };
+javascript.javascriptGenerator.forBlock['semantic_wrapper'] = function (block) {
+    const tag = block.getFieldValue('TAG') || 'section';
+    const statement_html = javascript.javascriptGenerator.statementToCode(block, 'HTML');
+    return `<${tag}>${statement_html}</${tag}>\n`;
+};
+javascript.javascriptGenerator.forBlock['element_wrapper'] = function (block) {
+    const tag = block.getFieldValue('TAG') || 'div';
+    const statement_html = javascript.javascriptGenerator.statementToCode(block, 'HTML');
+    let attrs = '';
+
+    if (tag === 'div') {
+        const elementId = getStringInputText(block, 'ELEMENT_ID', '').trim();
+        const elementClass = getStringInputText(block, 'ELEMENT_CLASS', '').trim();
+
+        if (elementId) {
+            attrs += ` id="${escapeAttributeText(elementId)}"`;
+        }
+        if (elementClass) {
+            attrs += ` class="${escapeAttributeText(elementClass)}"`;
+        }
+    }
+
+    return `<${tag}${attrs}>${statement_html}</${tag}>\n`;
+};
 javascript.javascriptGenerator.forBlock['meta'] = function (block) {
     return ` <meta name="viewport" content="width=device-width, initial-scale=1.0">\n<meta charset="UTF-8">\n`;
 };
@@ -102,6 +153,10 @@ javascript.javascriptGenerator.forBlock['script_wrapper'] = function (block) {
     const statement_html = javascript.javascriptGenerator.statementToCode(block, 'HTML');
     const code = `<script>${statement_html}</script>\n`;
     return code;
+};
+javascript.javascriptGenerator.forBlock['on_page_load'] = function (block) {
+    const actions = javascript.javascriptGenerator.statementToCode(block, 'ACTIONS');
+    return `window.addEventListener("load", function () {\n${actions}});\n`;
 };
 javascript.javascriptGenerator.forBlock['alert_block'] = function (block) {
     const value = javascript.javascriptGenerator.valueToCode(block, 'VALUE', javascript.Order.NONE) || '""';
@@ -138,6 +193,20 @@ javascript.javascriptGenerator.forBlock['boolean_value'] = function (block) {
 javascript.javascriptGenerator.forBlock['raw_expression'] = function (block) {
     const code = getStringInputText(block, 'CODE', 'document.title') || 'undefined';
     return [code, javascript.Order.NONE];
+};
+javascript.javascriptGenerator.forBlock['css_rule'] = function (block) {
+    const selector = getStringInputText(block, 'SELECTOR', '.card');
+    const declarations = javascript.javascriptGenerator.statementToCode(block, 'DECLARATIONS');
+    return [`${selector} {\n${declarations}}\n`, javascript.Order.ATOMIC];
+};
+javascript.javascriptGenerator.forBlock['add_css_rules'] = function (block) {
+    const rule = javascript.javascriptGenerator.valueToCode(block, 'RULE', javascript.Order.NONE) || '';
+    return rule ? `${rule}\n` : '';
+};
+javascript.javascriptGenerator.forBlock['css_property'] = function (block) {
+    const attribute = block.getFieldValue('ATTRIBUTE') || '';
+    const value = getStringInputText(block, 'VALUE', 'black');
+    return `${attribute}: ${value};\n`;
 };
 
 

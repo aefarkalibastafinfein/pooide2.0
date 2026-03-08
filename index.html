@@ -18,23 +18,18 @@
         <script>
             registerFieldMultilineInput();
             function forceInlineInputs(ws) {
+                if (!ws) return;
                 ws.getAllBlocks(false).forEach(function (block) {
                     block.setInputsInline(true);
                 });
             }
-            // i dont even have to explain either of these do i
-            // its in the name gng
-            forceInlineInputs(workspace);
-            workspace.addChangeListener(function () {
-                forceInlineInputs(workspace);
-            });
-
         </script>
 
         <script src="blocks.js"></script>
         <script src="generators.js"></script>
         <script src="toolbox.js"></script>
         <script src="zeus-renderer.js"></script>
+        <script src="reporter-bubbles.js"></script>
 
         <style>
             * {
@@ -158,6 +153,144 @@
             #settingsPanel button:hover {
                 background: #e8e8e8;
             }
+
+            .reporter-bubble-layer {
+                position: absolute;
+                inset: 0;
+                pointer-events: none;
+                overflow: visible;
+                z-index: 50;
+            }
+
+            .reporter-bubble {
+                position: absolute;
+                max-width: 240px;
+                pointer-events: auto;
+                opacity: 0;
+                transform: translateY(-8px);
+                transition: opacity 120ms ease, transform 120ms ease;
+            }
+
+            .reporter-bubble-box {
+                position: relative;
+                min-width: 110px;
+                max-width: 240px;
+                padding: 8px 10px;
+                border-radius: 8px;
+                background: #ffffff;
+                border: 1px solid #bdbdbd;
+                color: #111111;
+                font-size: 12px;
+                line-height: 1.4;
+                white-space: normal;
+            }
+
+            .reporter-bubble-visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .reporter-bubble-box::before {
+                content: "";
+                position: absolute;
+                left: 50%;
+                top: -7px;
+                width: 0;
+                height: 0;
+                border-left: 7px solid transparent;
+                border-right: 7px solid transparent;
+                border-bottom: 7px solid #bdbdbd;
+                transform: translateX(-50%);
+            }
+
+            .reporter-bubble-box::after {
+                content: "";
+                position: absolute;
+                left: 50%;
+                top: -6px;
+                width: 0;
+                height: 0;
+                border-left: 6px solid transparent;
+                border-right: 6px solid transparent;
+                border-bottom: 6px solid #ffffff;
+                transform: translateX(-50%);
+            }
+
+            .reporter-bubble-content {
+                min-width: 0;
+            }
+
+            .reporter-bubble-controls {
+                margin-top: 6px;
+                text-align: right;
+            }
+
+            .reporter-bubble-copy {
+                padding: 2px 6px;
+                border: 1px solid #bdbdbd;
+                border-radius: 4px;
+                background: #f3f3f3;
+                color: #111111;
+                font-size: 11px;
+                line-height: 1.2;
+                cursor: pointer;
+            }
+
+            .reporter-bubble-copy:hover {
+                background: #ebebeb;
+            }
+
+            .reporter-bubble-label {
+                margin-bottom: 4px;
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+                color: #555555;
+            }
+
+            .reporter-bubble-value {
+                display: block;
+                border-radius: 6px;
+                padding: 4px 6px;
+                background: #f3f3f3;
+                color: #111111;
+                font-family: Consolas, "Courier New", monospace;
+                white-space: pre-wrap;
+                word-break: break-word;
+            }
+
+            .reporter-bubble-string {
+                background: #f3f3f3;
+                color: #111111;
+            }
+
+            .reporter-bubble-number {
+                background: #f3f3f3;
+                color: #111111;
+            }
+
+            .reporter-bubble-boolean {
+                background: #f3f3f3;
+                color: #111111;
+            }
+
+            .reporter-bubble-expression,
+            .reporter-bubble-colour {
+                background: #f3f3f3;
+                color: #111111;
+            }
+
+            .reporter-bubble-css {
+                display: block;
+                background: #f3f3f3;
+                color: #111111;
+            }
+
+            .reporter-bubble-error {
+                background: #fff0f0;
+                color: #8b1f1f;
+            }
         </style>
     </head>
     <!-- This isnt vibecoded. Watch my every step.-->
@@ -259,6 +392,12 @@
                 media: 'https://unpkg.com/blockly/media/'
             });
 
+            forceInlineInputs(workspace);
+            workspace.addChangeListener(function () {
+                forceInlineInputs(workspace);
+            });
+            setupReporterBubbles(workspace);
+
             workspace.addChangeListener(function (e) {
                 if (e.isUiEvent) return;
                 // autosave to localStorage
@@ -345,6 +484,12 @@
                 });
 
                 workspace = window.workspace;
+
+                forceInlineInputs(workspace);
+                workspace.addChangeListener(function () {
+                    forceInlineInputs(workspace);
+                });
+                setupReporterBubbles(workspace);
 
                 workspace.addChangeListener(function (e) {
                     if (e.isUiEvent) return;
