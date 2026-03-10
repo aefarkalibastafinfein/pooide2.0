@@ -1,16 +1,27 @@
 registerContinuousToolbox();
 
 var DEFAULT_SETTINGS = {
+    theme: 'dark',
     renderer: 'zeus',
     gridSnap: true,
     gridSpacing: 25,
-    gridColour: '#333333',
+    gridColour: '',
     zoomWheel: true,
     zoomControls: true,
     zoomMin: 0.3,
     zoomMax: 3,
     trashcan: true,
     sounds: true
+};
+var THEME_CONFIGS = {
+    dark: {
+        workspaceBackground: '#000000',
+        gridColour: '#333333'
+    },
+    light: {
+        workspaceBackground: '#ffffff',
+        gridColour: '#c8c8c8'
+    }
 };
 var BASE_TOOLBOX = getBaseToolboxConfig();
 var SEARCH_INDEX = buildBlockSearchIndex(BASE_TOOLBOX);
@@ -32,6 +43,27 @@ function getSavedSettings() {
 
 function cloneToolboxConfig(toolbox) {
     return JSON.parse(JSON.stringify(toolbox));
+}
+
+function resolveTheme(theme) {
+    return theme === 'light' ? 'light' : 'dark';
+}
+
+function getThemeConfig(theme) {
+    return THEME_CONFIGS[resolveTheme(theme)];
+}
+
+function getResolvedGridColour(settings) {
+    var resolved = Object.assign({}, DEFAULT_SETTINGS, settings || {});
+    return resolved.gridColour || getThemeConfig(resolved.theme).gridColour;
+}
+
+function applyTheme(theme) {
+    var resolvedTheme = resolveTheme(theme);
+    var themeConfig = getThemeConfig(resolvedTheme);
+    document.body.setAttribute('data-theme', resolvedTheme);
+    document.documentElement.style.setProperty('--workspace-bg', themeConfig.workspaceBackground);
+    document.documentElement.style.setProperty('color-scheme', resolvedTheme);
 }
 
 function getBaseToolboxConfig() {
@@ -354,7 +386,7 @@ function buildWorkspaceOptions(settings) {
         grid: {
             spacing: resolved.gridSpacing,
             length: 3,
-            colour: resolved.gridColour,
+            colour: getResolvedGridColour(resolved),
             snap: resolved.gridSnap
         },
         sounds: resolved.sounds,
@@ -488,6 +520,7 @@ function updateWorkspaceToolbox(query) {
     rebuildWorkspace(currentSettings, getWorkspaceXmlText());
 }
 
+applyTheme(currentSettings.theme);
 var workspace = Blockly.inject('blocklyDiv', buildWorkspaceOptions(currentSettings));
 attachWorkspaceHelpers(workspace);
 setupToolbarSearch();
@@ -509,11 +542,12 @@ window.addEventListener('resize', function () {
 });
 
 function openSettings() {
+    document.getElementById('s-theme').value = resolveTheme(currentSettings.theme);
     document.getElementById('s-renderer').value = workspace.options.renderer || 'zeus';
     var g = workspace.options.gridOptions || {};
     document.getElementById('s-grid-snap').checked = !!g.snap;
     document.getElementById('s-grid-spacing').value = g.spacing || 25;
-    document.getElementById('s-grid-colour').value = g.colour || '#333333';
+    document.getElementById('s-grid-colour').value = g.colour || getResolvedGridColour(currentSettings);
     var z = workspace.options.zoomOptions || {};
     document.getElementById('s-zoom-wheel').checked = !!z.wheel;
     document.getElementById('s-zoom-controls').checked = !!z.controls;
@@ -529,11 +563,19 @@ function closeSettings() {
 }
 
 function applySettings() {
+    var nextTheme = resolveTheme(document.getElementById('s-theme').value);
+    var selectedGridColour = document.getElementById('s-grid-colour').value;
+    var previousDefaultGrid = getThemeConfig(currentSettings.theme).gridColour.toLowerCase();
+    if (String(selectedGridColour || '').toLowerCase() === previousDefaultGrid) {
+        selectedGridColour = getThemeConfig(nextTheme).gridColour;
+    }
+
     currentSettings = {
+        theme: nextTheme,
         renderer: document.getElementById('s-renderer').value,
         gridSnap: document.getElementById('s-grid-snap').checked,
         gridSpacing: parseInt(document.getElementById('s-grid-spacing').value) || 25,
-        gridColour: document.getElementById('s-grid-colour').value,
+        gridColour: selectedGridColour,
         zoomWheel: document.getElementById('s-zoom-wheel').checked,
         zoomControls: document.getElementById('s-zoom-controls').checked,
         zoomMin: parseFloat(document.getElementById('s-zoom-min').value) || 0.3,
@@ -542,6 +584,7 @@ function applySettings() {
         sounds: document.getElementById('s-sounds').checked
     };
 
+    applyTheme(currentSettings.theme);
     rebuildWorkspace(currentSettings, getWorkspaceXmlText());
     localStorage.setItem('pooide2_settings', JSON.stringify(currentSettings));
 

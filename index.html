@@ -29,29 +29,124 @@
                 box-sizing: border-box;
             }
 
+            :root {
+                --page-bg: #111316;
+                --page-text: #edf1f6;
+                --muted-text: #b9c0cb;
+                --toolbar-bg: #1b1e23;
+                --toolbar-border: #313741;
+                --panel-bg: #1c2026;
+                --panel-elevated-bg: #262b34;
+                --panel-border: #3b424e;
+                --panel-shadow: 0 10px 24px rgba(0, 0, 0, 0.32);
+                --button-bg: #2d333d;
+                --button-hover-bg: #39414d;
+                --button-text: #f5f7fa;
+                --input-bg: #121418;
+                --input-border: #49505d;
+                --input-text: #f5f7fa;
+                --input-placeholder: #929aa7;
+                --overlay-bg: rgba(0, 0, 0, 0.55);
+                --workspace-bg: #000000;
+                --toolbox-bg: #171a20;
+                --toolbox-hover-bg: #262c36;
+                --toolbox-selected-bg: #343c48;
+                --toolbox-text: #edf2f8;
+                --flyout-bg: #1d222a;
+                --scrollbar-handle: #596273;
+                --bubble-bg: #1f242c;
+                --bubble-border: #495160;
+                --bubble-soft-bg: #2a313b;
+                --bubble-text: #f5f7fa;
+                --bubble-muted: #c5ccd7;
+                --bubble-error-bg: #472828;
+                --bubble-error-text: #ffb1b1;
+                --status-error: #ff9c9c;
+            }
+
+            body[data-theme="light"] {
+                --page-bg: #eef1f5;
+                --page-text: #161a20;
+                --muted-text: #535b67;
+                --toolbar-bg: #f0f0f0;
+                --toolbar-border: #cccccc;
+                --panel-bg: #f0f0f0;
+                --panel-elevated-bg: #e6e6e6;
+                --panel-border: #cccccc;
+                --panel-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+                --button-bg: #ffffff;
+                --button-hover-bg: #e8e8e8;
+                --button-text: #111111;
+                --input-bg: #ffffff;
+                --input-border: #cccccc;
+                --input-text: #111111;
+                --input-placeholder: #757575;
+                --overlay-bg: rgba(0, 0, 0, 0.4);
+                --workspace-bg: #ffffff;
+                --toolbox-bg: #f3f3f3;
+                --toolbox-hover-bg: #ebebeb;
+                --toolbox-selected-bg: #d7dde7;
+                --toolbox-text: #111111;
+                --flyout-bg: #ffffff;
+                --scrollbar-handle: #b0b7c3;
+                --bubble-bg: #ffffff;
+                --bubble-border: #bdbdbd;
+                --bubble-soft-bg: #f3f3f3;
+                --bubble-text: #111111;
+                --bubble-muted: #555555;
+                --bubble-error-bg: #fff0f0;
+                --bubble-error-text: #8b1f1f;
+                --status-error: #8b1f1f;
+            }
+
             body {
                 display: flex;
                 flex-direction: column;
                 height: 100vh;
                 overflow: hidden;
                 font-family: sans-serif;
+                background: var(--page-bg);
+                color: var(--page-text);
             }
 
             #toolbar {
                 display: flex;
                 gap: 6px;
                 padding: 6px 10px;
-                background: #f0f0f0;
-                border-bottom: 1px solid #ccc;
+                background: var(--toolbar-bg);
+                border-bottom: 1px solid var(--toolbar-border);
+                color: var(--page-text);
             }
 
             #toolbar button {
                 padding: 4px 12px;
                 cursor: pointer;
+                border: 1px solid var(--input-border);
+                border-radius: 4px;
+                background: var(--button-bg);
+                color: var(--button-text);
+            }
+
+            #toolbar button:hover {
+                background: var(--button-hover-bg);
             }
 
             #toolbar .toolbar-spacer {
                 flex: 1;
+            }
+
+            .brand {
+                display: flex;
+                align-items: center;
+                font-weight: 700;
+                color: var(--page-text);
+            }
+
+            .sep {
+                width: 1px;
+                align-self: stretch;
+                background: var(--toolbar-border);
+                margin: 0 2px;
             }
 
             .toolbar-search {
@@ -70,15 +165,21 @@
                 border: 0;
                 border-radius: 3px;
                 font-size: 13px;
+                background: var(--input-bg);
+                color: var(--input-text);
                 opacity: 0;
                 pointer-events: none;
                 transition: width 120ms ease, padding 120ms ease, opacity 120ms ease, border-width 120ms ease;
             }
 
+            .toolbar-search input::placeholder {
+                color: var(--input-placeholder);
+            }
+
             .toolbar-search.expanded input {
                 width: 220px;
                 padding: 4px 8px;
-                border: 1px solid #ccc;
+                border: 1px solid var(--input-border);
                 opacity: 1;
                 pointer-events: auto;
             }
@@ -94,11 +195,88 @@
                 height: 100%;
             }
 
+            #blocklyDiv .blocklySvg {
+                background: var(--workspace-bg);
+            }
+
+            #blocklyDiv .blocklyMainBackground {
+                fill: var(--workspace-bg);
+            }
+
+            #blocklyDiv .blocklyToolboxDiv {
+                background: var(--toolbox-bg);
+            }
+
+            #blocklyDiv .blocklyToolboxCategoryContainer,
+            #blocklyDiv .blocklyToolboxCategory,
+            #blocklyDiv .blocklyToolboxLabel {
+                background: var(--toolbox-bg);
+                color: var(--toolbox-text);
+            }
+
+            #blocklyDiv .blocklyToolboxCategoryLabel,
+            #blocklyDiv .blocklyTreeLabel {
+                color: var(--toolbox-text);
+                fill: var(--toolbox-text);
+            }
+
+            #blocklyDiv .blocklyTreeRow {
+                border-radius: 6px;
+            }
+
+            #blocklyDiv .blocklyToolboxCategory:hover,
+            #blocklyDiv .blocklyTreeRow:hover {
+                background: var(--toolbox-hover-bg);
+            }
+
+            #blocklyDiv .blocklyToolboxSelected,
+            #blocklyDiv .blocklyTreeSelected,
+            #blocklyDiv .blocklyTreeRow.blocklyTreeSelected {
+                background: var(--toolbox-selected-bg) !important;
+            }
+
+            #blocklyDiv .blocklyToolboxSelected .blocklyToolboxCategoryLabel {
+                color: var(--toolbox-text);
+                fill: var(--toolbox-text);
+            }
+
+            #blocklyDiv .blocklyFlyoutBackground {
+                fill: var(--flyout-bg);
+                fill-opacity: 1;
+            }
+
+            #blocklyDiv .blocklyFlyoutLabelText {
+                fill: var(--toolbox-text);
+            }
+
+            #blocklyDiv .blocklyScrollbarHandle {
+                fill: var(--scrollbar-handle);
+            }
+
+            .blocklyDropDownDiv,
+            .blocklyWidgetDiv .goog-menu,
+            .blocklyWidgetDiv input,
+            .blocklyWidgetDiv textarea {
+                background: var(--panel-bg);
+                color: var(--page-text);
+                border-color: var(--panel-border);
+            }
+
+            .blocklyWidgetDiv .goog-menuitem,
+            .blocklyWidgetDiv .goog-menuitem-content {
+                color: var(--page-text);
+            }
+
+            .blocklyWidgetDiv .goog-menuitem-highlight,
+            .blocklyWidgetDiv .goog-option-selected {
+                background: var(--toolbox-hover-bg);
+            }
+
             #settingsOverlay {
                 display: none;
                 position: fixed;
                 inset: 0;
-                background: rgba(0, 0, 0, 0.4);
+                background: var(--overlay-bg);
                 z-index: 100;
             }
 
@@ -109,14 +287,16 @@
             }
 
             #settingsPanel {
-                background: #f0f0f0;
-                border: 1px solid #ccc;
+                background: var(--panel-bg);
+                border: 1px solid var(--panel-border);
                 padding: 16px 20px;
                 width: 340px;
                 max-height: 80vh;
                 overflow-y: auto;
                 font-family: sans-serif;
                 font-size: 13px;
+                color: var(--page-text);
+                box-shadow: var(--panel-shadow);
             }
 
             #settingsPanel h2 {
@@ -135,9 +315,11 @@
             #settingsPanel input[type=number],
             #settingsPanel input[type=color] {
                 padding: 2px 6px;
-                border: 1px solid #ccc;
+                border: 1px solid var(--input-border);
                 border-radius: 3px;
                 font-size: 13px;
+                background: var(--input-bg);
+                color: var(--input-text);
             }
 
             #settingsPanel select {
@@ -151,7 +333,7 @@
             #settingsPanel .section {
                 margin-top: 10px;
                 padding-top: 8px;
-                border-top: 1px solid #ddd;
+                border-top: 1px solid var(--panel-border);
             }
 
             #settingsPanel .section-title {
@@ -169,13 +351,14 @@
             #settingsPanel button {
                 padding: 4px 14px;
                 cursor: pointer;
-                border: 1px solid #ccc;
+                border: 1px solid var(--input-border);
                 border-radius: 3px;
-                background: #fff;
+                background: var(--button-bg);
+                color: var(--button-text);
             }
 
             #settingsPanel button:hover {
-                background: #e8e8e8;
+                background: var(--button-hover-bg);
             }
 
             .workspace-find-window {
@@ -184,10 +367,11 @@
                 top: 72px;
                 right: 20px;
                 width: 280px;
-                border: 1px solid #bdbdbd;
-                background: #f0f0f0;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+                border: 1px solid var(--panel-border);
+                background: var(--panel-bg);
+                box-shadow: var(--panel-shadow);
                 z-index: 90;
+                color: var(--page-text);
             }
 
             .workspace-find-window.open {
@@ -199,8 +383,8 @@
                 align-items: center;
                 justify-content: space-between;
                 padding: 6px 8px;
-                border-bottom: 1px solid #ccc;
-                background: #e6e6e6;
+                border-bottom: 1px solid var(--panel-border);
+                background: var(--panel-elevated-bg);
                 cursor: move;
                 user-select: none;
             }
@@ -213,8 +397,9 @@
             .workspace-find-close {
                 min-width: 24px;
                 padding: 2px 6px;
-                border: 1px solid #bdbdbd;
-                background: #fff;
+                border: 1px solid var(--input-border);
+                background: var(--button-bg);
+                color: var(--button-text);
                 cursor: pointer;
             }
 
@@ -225,9 +410,11 @@
             .workspace-find-body input {
                 width: 100%;
                 padding: 5px 8px;
-                border: 1px solid #ccc;
+                border: 1px solid var(--input-border);
                 border-radius: 3px;
                 font-size: 13px;
+                background: var(--input-bg);
+                color: var(--input-text);
             }
 
             .workspace-find-actions {
@@ -239,8 +426,9 @@
 
             .workspace-find-actions button {
                 padding: 4px 10px;
-                border: 1px solid #bdbdbd;
-                background: #fff;
+                border: 1px solid var(--input-border);
+                background: var(--button-bg);
+                color: var(--button-text);
                 cursor: pointer;
             }
 
@@ -248,11 +436,11 @@
                 margin-top: 8px;
                 min-height: 16px;
                 font-size: 12px;
-                color: #444;
+                color: var(--muted-text);
             }
 
             .workspace-find-status.error {
-                color: #8b1f1f;
+                color: var(--status-error);
             }
 
             .reporter-bubble-layer {
@@ -278,9 +466,9 @@
                 max-width: 240px;
                 padding: 8px 10px;
                 border-radius: 8px;
-                background: #ffffff;
-                border: 1px solid #bdbdbd;
-                color: #111111;
+                background: var(--bubble-bg);
+                border: 1px solid var(--bubble-border);
+                color: var(--bubble-text);
                 font-size: 12px;
                 line-height: 1.4;
                 white-space: normal;
@@ -300,7 +488,7 @@
                 height: 0;
                 border-left: 7px solid transparent;
                 border-right: 7px solid transparent;
-                border-bottom: 7px solid #bdbdbd;
+                border-bottom: 7px solid var(--bubble-border);
                 transform: translateX(-50%);
             }
 
@@ -313,7 +501,7 @@
                 height: 0;
                 border-left: 6px solid transparent;
                 border-right: 6px solid transparent;
-                border-bottom: 6px solid #ffffff;
+                border-bottom: 6px solid var(--bubble-bg);
                 transform: translateX(-50%);
             }
 
@@ -328,17 +516,17 @@
 
             .reporter-bubble-copy {
                 padding: 2px 6px;
-                border: 1px solid #bdbdbd;
+                border: 1px solid var(--bubble-border);
                 border-radius: 4px;
-                background: #f3f3f3;
-                color: #111111;
+                background: var(--bubble-soft-bg);
+                color: var(--bubble-text);
                 font-size: 11px;
                 line-height: 1.2;
                 cursor: pointer;
             }
 
             .reporter-bubble-copy:hover {
-                background: #ebebeb;
+                background: var(--button-hover-bg);
             }
 
             .reporter-bubble-label {
@@ -347,50 +535,50 @@
                 font-weight: 700;
                 letter-spacing: 0.04em;
                 text-transform: uppercase;
-                color: #555555;
+                color: var(--bubble-muted);
             }
 
             .reporter-bubble-value {
                 display: block;
                 border-radius: 6px;
                 padding: 4px 6px;
-                background: #f3f3f3;
-                color: #111111;
+                background: var(--bubble-soft-bg);
+                color: var(--bubble-text);
                 font-family: Consolas, "Courier New", monospace;
                 white-space: pre-wrap;
                 word-break: break-word;
             }
 
             .reporter-bubble-string {
-                background: #f3f3f3;
-                color: #111111;
+                background: var(--bubble-soft-bg);
+                color: var(--bubble-text);
             }
 
             .reporter-bubble-number {
-                background: #f3f3f3;
-                color: #111111;
+                background: var(--bubble-soft-bg);
+                color: var(--bubble-text);
             }
 
             .reporter-bubble-boolean {
-                background: #f3f3f3;
-                color: #111111;
+                background: var(--bubble-soft-bg);
+                color: var(--bubble-text);
             }
 
             .reporter-bubble-expression,
             .reporter-bubble-colour {
-                background: #f3f3f3;
-                color: #111111;
+                background: var(--bubble-soft-bg);
+                color: var(--bubble-text);
             }
 
             .reporter-bubble-css {
                 display: block;
-                background: #f3f3f3;
-                color: #111111;
+                background: var(--bubble-soft-bg);
+                color: var(--bubble-text);
             }
 
             .reporter-bubble-error {
-                background: #fff0f0;
-                color: #8b1f1f;
+                background: var(--bubble-error-bg);
+                color: var(--bubble-error-text);
             }
 
         </style>
@@ -415,15 +603,22 @@
         </div>
 
         <div id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
-            <div id="settingsPanel">
-                <h2>Settings</h2>
+                <div id="settingsPanel">
+                    <h2>Settings</h2>
 
-                <div class="section">
-                    <label>Renderer <select id="s-renderer">
-                            <option value="zeus">Zeus</option>
-                            <option value="zelos">Zelos</option>
-                            <option value="geras">Geras</option>
-                            <option value="thrasos">Thrasos</option>
+                    <div class="section">
+                        <label>Theme <select id="s-theme">
+                                <option value="dark">Dark</option>
+                                <option value="light">Light</option>
+                            </select></label>
+                    </div>
+
+                    <div class="section">
+                        <label>Renderer <select id="s-renderer">
+                                <option value="zeus">Zeus</option>
+                                <option value="zelos">Zelos</option>
+                                <option value="geras">Geras</option>
+                                <option value="thrasos">Thrasos</option>
                         </select></label>
                 </div>
 
