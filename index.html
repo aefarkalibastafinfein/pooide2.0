@@ -580,8 +580,8 @@
                 background: var(--bubble-error-bg);
                 color: var(--bubble-error-text);
             }
-
         </style>
+        <!--should i have made this a seperate file instead? yes. did i? no.-->
     </head>
     <!-- This isnt vibecoded. Watch my every step.-->
 
@@ -597,28 +597,29 @@
             <button onclick="openSettings()" title="Workspace settings">Settings</button>
             <div class="toolbar-spacer"></div>
             <div class="toolbar-search" id="toolbarSearch">
-                <button id="toolbarSearchToggle" class="toolbar-search-toggle" type="button" title="Search blocks">Search</button>
+                <button id="toolbarSearchToggle" class="toolbar-search-toggle" type="button"
+                    title="Search blocks">Search</button>
                 <input id="toolbarSearchInput" type="text" placeholder="Find blocks">
             </div>
         </div>
 
         <div id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
-                <div id="settingsPanel">
-                    <h2>Settings</h2>
+            <div id="settingsPanel">
+                <h2>Settings</h2>
 
-                    <div class="section">
-                        <label>Theme <select id="s-theme">
-                                <option value="dark">Dark</option>
-                                <option value="light">Light</option>
-                            </select></label>
-                    </div>
+                <div class="section">
+                    <label>Theme <select id="s-theme">
+                            <option value="dark">Dark</option>
+                            <option value="light">Light</option>
+                        </select></label>
+                </div>
 
-                    <div class="section">
-                        <label>Renderer <select id="s-renderer">
-                                <option value="zeus">Zeus</option>
-                                <option value="zelos">Zelos</option>
-                                <option value="geras">Geras</option>
-                                <option value="thrasos">Thrasos</option>
+                <div class="section">
+                    <label>Renderer <select id="s-renderer">
+                            <option value="zeus">Zeus</option>
+                            <option value="zelos">Zelos</option>
+                            <option value="geras">Geras</option>
+                            <option value="thrasos">Thrasos</option>
                         </select></label>
                 </div>
 
