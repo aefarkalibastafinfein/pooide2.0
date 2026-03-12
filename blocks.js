@@ -278,11 +278,21 @@ registerStringShadowExtension('list_item_default_string_shadow', [
     { inputName: 'TEXT', text: 'List item' }
 ]);
 registerStringShadowExtension('css_rule_default_string_shadow', [
-    { inputName: 'SELECTOR', text: '.card' }
+    { inputName: 'SELECTOR', text: 'card' }
 ]);
 registerStringShadowExtension('css_property_default_string_shadow', [
     { inputName: 'VALUE', text: 'black' }
 ]);
+
+Blockly.Extensions.register('custom_style_default_multiline_shadow', function () {
+    setDefaultShadow(
+        this,
+        'STYLE',
+        '<shadow type="multiline_string_value"><field name="TEXT">' +
+        escapeShadowText('body {\n  background-color: red;\n}') +
+        '</field></shadow>'
+    );
+});
 
 Blockly.Extensions.register('match_parent_colour', function () {
     var block = this;
@@ -296,6 +306,43 @@ Blockly.Extensions.register('match_parent_colour', function () {
 Blockly.Extensions.register('leaf_output_shape', function () {
     if (typeof this.setOutputShape !== 'function') return;
     this.setOutputShape(10);
+});
+
+function chainOnChange(block, fn) {
+    if (!block || typeof block.setOnChange !== 'function') return;
+    var previous = block.onchange;
+    block.setOnChange(function (event) {
+        if (typeof previous === 'function') {
+            try {
+                previous.call(block, event);
+            } catch (_) { }
+        }
+        fn.call(block, event);
+    });
+}
+
+Blockly.Extensions.register('selector_type_hides_name_input', function () {
+    var block = this;
+    if (block.__selectorTypeHidesNameBound) return;
+    block.__selectorTypeHidesNameBound = true;
+
+    function updateVisibility() {
+        var field = block.getField && block.getField('SELECTOR_TYPE');
+        if (!field) return;
+        var selectorType = String(field.getValue() || 'element');
+        var input = (block.getInput && (block.getInput('SELECTOR') || block.getInput('ELEMENT'))) || null;
+        if (!input || typeof input.setVisible !== 'function') return;
+
+        var shouldShow = selectorType !== 'all';
+        if (typeof input.isVisible === 'function' && input.isVisible() === shouldShow) return;
+        input.setVisible(shouldShow);
+        if (block.rendered && typeof block.render === 'function') {
+            block.render();
+        }
+    }
+
+    chainOnChange(block, updateVisibility);
+    updateVisibility();
 });
 
 Blockly.Extensions.register('semantic_wrapper_colour', function () {
@@ -374,16 +421,15 @@ Blockly.common.defineBlocksWithJsonArray([
         "type": "custom_style",
         "message0": "custom raw style: %1",
         "args0": [{
-            "type": "field_multilinetext",
-            "name": "COLOUR",
-            "text": "body {\n  background-color: red;\n}",
-            "maxLines": 6,
-            "spellcheck": false
+            "type": "input_value",
+            "name": "STYLE",
+            "check": "String"
         }],
         "previousStatement": "HtmlStatement",
         "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.style,
-        "tooltip": "Poopy poopy butt dookie"
+        "tooltip": "Poopy poopy butt dookie",
+        "extensions": ["custom_style_default_multiline_shadow"]
     },
     {
         "type": "html_wrapper",
@@ -690,7 +736,7 @@ Blockly.common.defineBlocksWithJsonArray([
             {
                 "type": "input_statement",
                 "name": "ITEMS",
-                "check": "ListItem"
+                "check": "HtmlStatement"
             }
         ],
         "previousStatement": "HtmlStatement",
@@ -706,8 +752,8 @@ Blockly.common.defineBlocksWithJsonArray([
             "name": "TEXT",
             "check": "String"
         }],
-        "previousStatement": "ListItem",
-        "nextStatement": "ListItem",
+        "previousStatement": "HtmlStatement",
+        "nextStatement": "HtmlStatement",
         "colour": THEME_COLOURS.content,
         "tooltip": "Item inside a list",
         "extensions": ["list_item_default_string_shadow"]
@@ -913,6 +959,23 @@ Blockly.common.defineBlocksWithJsonArray([
         "extensions": ["match_parent_colour"]
     },
     {
+        "type": "multiline_string_value",
+        "message0": "%1",
+        "args0": [
+            {
+                "type": "field_multilinetext",
+                "name": "TEXT",
+                "text": "oh my\nis this multiline?\n Ohhh it is \n suuuuper tuff hooray",
+                "maxLines": 6,
+                "spellcheck": false
+            }
+        ],
+        "output": "String",
+        "colour": THEME_COLOURS.script,
+        "tooltip": "A multi-line string JavaScript value",
+        "extensions": ["match_parent_colour"]
+    },
+    {
         "type": "to_string",
         "message0": "to string %1",
         "args0": [
@@ -960,6 +1023,22 @@ Blockly.common.defineBlocksWithJsonArray([
         "extensions": ["match_parent_colour"]
     },
     {
+        "type": "object_value",
+        "message0": "object",
+        "output": "Object",
+        "colour": THEME_COLOURS.script,
+        "tooltip": "A JavaScript object value",
+        "extensions": ["match_parent_colour"]
+    },
+    {
+        "type": "array_value",
+        "message0": "array",
+        "output": "Array",
+        "colour": THEME_COLOURS.script,
+        "tooltip": "A JavaScript array value",
+        "extensions": ["match_parent_colour"]
+    },
+    {
         "type": "raw_expression",
         "message0": "expression %1",
         "args0": [
@@ -976,13 +1055,29 @@ Blockly.common.defineBlocksWithJsonArray([
     },
     {
         "type": "css_rule",
-        "message0": "CSS rule %1 %2",
+        "message0": "CSS rule %1",
         "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "SELECTOR_TYPE",
+                "options": [
+                    ["element", "element"],
+                    ["class .", "class"],
+                    ["id #", "id"],
+                    ["*", "all"]
+                ]
+            }
+        ],
+        "message1": "selector %1",
+        "args1": [
             {
                 "type": "input_value",
                 "name": "SELECTOR",
                 "check": "String"
-            },
+            }
+        ],
+        "message2": "%1",
+        "args2": [
             {
                 "type": "input_statement",
                 "name": "DECLARATIONS",
@@ -991,8 +1086,8 @@ Blockly.common.defineBlocksWithJsonArray([
         ],
         "output": "CssRule",
         "colour": THEME_COLOURS.style,
-        "tooltip": "Wrap CSS declarations in a selector block",
-        "extensions": ["css_rule_default_string_shadow", "match_parent_colour", "leaf_output_shape"]
+        "tooltip": "Wrap CSS declarations in a selector block (element, .class, or #id)",
+        "extensions": ["css_rule_default_string_shadow", "match_parent_colour", "selector_type_hides_name_input", "leaf_output_shape"]
     },
     {
         "type": "add_css_rules",
@@ -1033,13 +1128,26 @@ Blockly.common.defineBlocksWithJsonArray([
 
     {
         "type": "set_style_attribute",
-        "message0": "set style attribute %1 of %2 to %3",
+        "message0": "set style attribute %1 of %2",
         "args0": [
             {
                 "type": "field_dropdown",
                 "name": "ATTRIBUTE",
                 "options": CSS_ATTRIBUTE_OPTIONS
             },
+            {
+                "type": "field_dropdown",
+                "name": "SELECTOR_TYPE",
+                "options": [
+                    ["element", "element"],
+                    ["class .", "class"],
+                    ["id #", "id"],
+                    ["*", "all"]
+                ]
+            }
+        ],
+        "message1": "%1 to %2",
+        "args1": [
             {
                 "type": "input_value",
                 "name": "ELEMENT",
@@ -1051,11 +1159,12 @@ Blockly.common.defineBlocksWithJsonArray([
                 "check": "String"
             }
         ],
+        "inputsInline": true,
         "previousStatement": "CssStatement",
         "nextStatement": "CssStatement",
         "colour": THEME_COLOURS.styleAccent,
         "tooltip": "You HAVE to put this in a style wrapper or it wont work 🤤"
-        , "extensions": ["set_style_attribute_default_string_shadows"]
+        , "extensions": ["set_style_attribute_default_string_shadows", "selector_type_hides_name_input"]
     },
 
     {

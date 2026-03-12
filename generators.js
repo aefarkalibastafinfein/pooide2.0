@@ -109,7 +109,7 @@ javascript.javascriptGenerator.forBlock['list_item'] = function (block) {
 };
 
 javascript.javascriptGenerator.forBlock['custom_style'] = function (block) {
-    const styleText = block.getFieldValue('COLOUR') || '';
+    const styleText = getStringInputText(block, 'STYLE', '');
     return ` <style>${styleText}</style>\n`;
 };
 javascript.javascriptGenerator.forBlock['heading'] = function (block) {
@@ -198,6 +198,10 @@ javascript.javascriptGenerator.forBlock['string_value'] = function (block) {
     const text = block.getFieldValue('TEXT') || '';
     return [JSON.stringify(text), javascript.Order.ATOMIC];
 };
+javascript.javascriptGenerator.forBlock['multiline_string_value'] = function (block) {
+    const text = block.getFieldValue('TEXT') || '';
+    return [JSON.stringify(text), javascript.Order.ATOMIC];
+};
 javascript.javascriptGenerator.forBlock['to_string'] = function (block) {
     const value = javascript.javascriptGenerator.valueToCode(block, 'VALUE', javascript.Order.NONE) || '""';
     const trimmed = value.trim();
@@ -214,12 +218,32 @@ javascript.javascriptGenerator.forBlock['boolean_value'] = function (block) {
     const value = block.getFieldValue('VALUE') === 'false' ? 'false' : 'true';
     return [value, javascript.Order.ATOMIC];
 };
+javascript.javascriptGenerator.forBlock['object_value'] = function (_block) {
+    return ['({})', javascript.Order.ATOMIC];
+};
+javascript.javascriptGenerator.forBlock['array_value'] = function (_block) {
+    return ['([])', javascript.Order.ATOMIC];
+};
 javascript.javascriptGenerator.forBlock['raw_expression'] = function (block) {
     const code = getStringInputText(block, 'CODE', 'document.title') || 'undefined';
     return [code, javascript.Order.NONE];
 };
 javascript.javascriptGenerator.forBlock['css_rule'] = function (block) {
-    const selector = getStringInputText(block, 'SELECTOR', '.card');
+    const selectorType = String(block.getFieldValue('SELECTOR_TYPE') || 'element');
+    if (selectorType === 'all') {
+        const declarations = javascript.javascriptGenerator.statementToCode(block, 'DECLARATIONS');
+        return [`* {\n${declarations}}\n`, javascript.Order.ATOMIC];
+    }
+
+    const rawSelector = String(getStringInputText(block, 'SELECTOR', 'card') || '').trim();
+    let selector = rawSelector;
+    // backward compat with the old version
+    if (selector && (selector[0] === '.' || selector[0] === '#')) {
+    } else if (selectorType === 'class') {
+        selector = selector ? `.${selector}` : '.className';
+    } else if (selectorType === 'id') {
+        selector = selector ? `#${selector}` : '#idName';
+    }
     const declarations = javascript.javascriptGenerator.statementToCode(block, 'DECLARATIONS');
     return [`${selector} {\n${declarations}}\n`, javascript.Order.ATOMIC];
 };
@@ -246,7 +270,22 @@ javascript.javascriptGenerator.forBlock['href_link'] = function (block) {
 
 javascript.javascriptGenerator.forBlock['set_style_attribute'] = function (block) {
     const attribute = block.getFieldValue('ATTRIBUTE') || '';
-    const element = getStringInputText(block, 'ELEMENT', 'html');
+    const selectorType = String(block.getFieldValue('SELECTOR_TYPE') || 'element');
+    if (selectorType === 'all') {
+        const value = getStringInputText(block, 'VALUE', 'black');
+        const escAttr = attribute.replace(/'/g, "\\'");
+        const escValue = value.replace(/'/g, "\\'");
+        return `* { ${escAttr}: ${escValue}; }\n`;
+    }
+    const rawElement = String(getStringInputText(block, 'ELEMENT', 'html') || '').trim();
+    let element = rawElement;
+    // backward compat with the old version
+    if (element && (element[0] === '.' || element[0] === '#')) {
+    } else if (selectorType === 'class') {
+        element = element ? `.${element}` : '.className';
+    } else if (selectorType === 'id') {
+        element = element ? `#${element}` : '#idName';
+    }
     const value = getStringInputText(block, 'VALUE', 'black');
     const escAttr = attribute.replace(/'/g, "\\'");
     const escValue = value.replace(/'/g, "\\'");

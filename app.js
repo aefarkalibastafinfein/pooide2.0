@@ -66,11 +66,58 @@ function applyTheme(theme) {
     document.documentElement.style.setProperty('color-scheme', resolvedTheme);
 }
 
+function hasUrlParam(name) {
+    try {
+        var params = new URLSearchParams(window.location.search || '');
+        return params.has(name);
+    } catch (_) {
+        return false;
+    }
+}
+
+function buildTestingToolboxCategory() {
+
+    var colour = (typeof THEME_COLOURS === 'object' && THEME_COLOURS && THEME_COLOURS.script)
+        ? THEME_COLOURS.script
+        : '#888888';
+
+    return {
+        kind: 'category',
+        name: 'Test',
+        colour: colour,
+        contents: [
+            { kind: 'block', type: 'doctype' },            // HtmlStatement (default notch)
+            { kind: 'block', type: 'style_wrapper' },      // C-block with CssStatement children
+            { kind: 'block', type: 'add_css_rules' },      // CssStatement notch
+            { kind: 'block', type: 'set_style_attribute' },// CssStatement notch (accent block)
+            { kind: 'block', type: 'css_rule' },           // Leaf reporter + CssDeclaration children
+            { kind: 'block', type: 'css_property' },       // CssDeclaration notch
+            { kind: 'block', type: 'script_wrapper' },     // C-block with ScriptStatement children
+            { kind: 'block', type: 'on_page_load' },       // ScriptStatement notch
+            { kind: 'block', type: 'alert_block' },        // ScriptStatement notch
+            { kind: 'block', type: 'log_block' },          // ScriptStatement notch
+
+            { kind: 'block', type: 'raw_expression' },          // Rounded (any)
+            { kind: 'block', type: 'string_value' },            // Square (String)
+            { kind: 'block', type: 'multiline_string_value' },  // Square (String, multiline)
+            { kind: 'block', type: 'number_value' },            // Squircle (Number)
+            { kind: 'block', type: 'boolean_value' },           // Hexagon (Boolean)
+            { kind: 'block', type: 'object_value' },            // TAB (Object)
+            { kind: 'block', type: 'array_value' },             // BTAB (Array)
+            { kind: 'block', type: 'colour_hsv_sliders' },      // Octogon (Colour)
+        ]
+    };
+}
+
 function getBaseToolboxConfig() {
     var toolbox = cloneToolboxConfig(myToolbox);
     toolbox.contents = (toolbox.contents || []).filter(function (item) {
         return item && item.kind === 'category';
     });
+
+    if (hasUrlParam('testing')) {
+        toolbox.contents.push(buildTestingToolboxCategory());
+    }
     return toolbox;
 }
 

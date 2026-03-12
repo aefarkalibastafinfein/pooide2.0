@@ -69,6 +69,7 @@ const myToolbox = {
                 { "kind": "block", "type": "log_block" },
                 { "kind": "block", "type": "redirect_block" },
                 { "kind": "block", "type": "string_value" },
+                { "kind": "block", "type": "multiline_string_value" },
                 { "kind": "block", "type": "to_string" },
                 { "kind": "block", "type": "number_value" },
                 { "kind": "block", "type": "boolean_value" },
